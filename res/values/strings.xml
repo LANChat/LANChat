@@ -1,0 +1,10 @@
+<resources>
+
+    <string name="app_name">LANChat</string>
+    <string name="info">当前在线0个用户</string>
+    <string name="file_title">选择要发送的文件</string>
+    <string name="file_path">当前路径：</string>
+    <string name="no_wifi">没有可供使用的WiFi，请检查设置后重新启动本程序。</string>
+    
+
+</resources>
