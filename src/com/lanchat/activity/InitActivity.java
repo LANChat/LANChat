@@ -226,7 +226,7 @@ public static String hostIp;
 				}
 			}
 		}catch(SocketException ex){
-			Log.e("MyFeiGeActivity", "获取本地IP地址失败");
+			Log.e("InitActivity", "获取本地IP地址失败");
 		}
 		
 		return null;

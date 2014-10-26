@@ -393,13 +393,13 @@ public class NetThreadHelper implements Runnable{
 			if(userIp.equals(InitActivity.hostIp))
 				user.setGroupName("自己");
 			else
-				user.setGroupName("未分组好友");
+				user.setGroupName("对方未分组好友");
 		}else if (userInfo.length == 1){
 			user.setUserName(userInfo[0]);
 			if(userIp.equals(InitActivity.hostIp))
 				user.setGroupName("自己");
 			else
-				user.setGroupName("未分组好友");
+				user.setGroupName("对方未分组好友");
 		}else{
 			user.setUserName(userInfo[0]);
 			if(userIp.equals(InitActivity.hostIp))

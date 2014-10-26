@@ -76,7 +76,7 @@ public class NetTcpFileReceiveThread implements Runnable {
 				Log.d(TAG, "已连接上发送端");
 				bos = new BufferedOutputStream(socket.getOutputStream());
 				
-				//发送收取文件的命令
+				//发送收取文件飞鸽命令
 				byte[] sendBytes = ipmsgPro.getProtocolString().getBytes("gbk");
 				bos.write(sendBytes, 0, sendBytes.length);
 				bos.flush();
