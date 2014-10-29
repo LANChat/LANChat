@@ -2,12 +2,15 @@ package com.lanchat.activity;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import com.lanchat.adapter.ChatListAdapter;
 import com.lanchat.data.ChatMessage;
@@ -17,32 +20,67 @@ import com.lanchat.util.IpMessageConst;
 import com.lanchat.util.IpMessageProtocol;
 import com.lanchat.util.UsedConst;
 
+
+
+
+
+import android.app.Dialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Message;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.style.ImageSpan;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup.LayoutParams;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.GridView;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.SimpleAdapter;
 import android.widget.TextView;
+import android.widget.AdapterView.OnItemClickListener;
 
 public class ChatActivity extends BasicActivity implements OnClickListener,ReceiveMsgListener{
 	private TextView chat_name;			//名字及IP
 	private TextView chat_mood;			//组名
+	
 	private Button chat_quit;			//退出按钮
+
+	
 	private ListView chat_list;			//聊天列表
+	
+	
 	private EditText chat_input;		//聊天输入框
 	private Button chat_send;			//发送按钮
+	/* 表情选择按钮
+	 *jc
+	 */
+	private ImageView chat_face;
+	private ChatListAdapter adapter;	//ListView对应的adapter
+	private int[] imageIds = new int[107];
+	private Dialog builder; //控制表情框的句柄
 	
-	private List<ChatMessage> msgList;	//用于显示的消息list
+	
+	private ArrayList<ChatMessage> msgList;	//消息list
+	
+	
+	
+	
 	private String receiverName;			//要接收本activity所发送的消息的用户名字
 	private String receiverIp;			//要接收本activity所发送的消息的用户IP
 	private String receiverGroup;			//要接收本activity所发送的消息的用户组名
-	private ChatListAdapter adapter;	//ListView对应的adapter
+
 	private String selfName;
 	private String selfGroup;
 	
@@ -68,7 +106,7 @@ public class ChatActivity extends BasicActivity implements OnClickListener,Recei
 		chat_mood.setText("组名：" + receiverGroup);
 		chat_quit.setOnClickListener(this);
 		chat_send.setOnClickListener(this);
-		
+		chat_face.setOnClickListener(this);
 		Iterator<ChatMessage> it = netThreadHelper.getReceiveMsgQueue().iterator();
 		while(it.hasNext()){	//循环消息队列，获取队列中与本聊天activity相关信息
 			ChatMessage temp = it.next();
@@ -79,7 +117,7 @@ public class ChatActivity extends BasicActivity implements OnClickListener,Recei
 			}
 		}
 		
-		adapter = new ChatListAdapter(this, msgList);
+		adapter = new ChatListAdapter(this,msgList);
 		chat_list.setAdapter(adapter);
 		
 		netThreadHelper.addReceiveMsgListener(this);	//注册到listeners
@@ -92,6 +130,7 @@ public class ChatActivity extends BasicActivity implements OnClickListener,Recei
 		chat_list = (ListView) findViewById(R.id.chat_list);
 		chat_input = (EditText) findViewById(R.id.chat_input);
 		chat_send = (Button) findViewById(R.id.chat_send);
+		chat_face=(ImageView)findViewById(R.id.chat_face);//表情扩张键
 	}
 
 	@Override
@@ -149,13 +188,24 @@ public class ChatActivity extends BasicActivity implements OnClickListener,Recei
 		}else if(v == chat_quit){
 			finish();
 		}
+		else if(v == chat_face)
+		{
+			/*出现表情圈选择
+			 jc 
+			 */
+	
+			createExpressionDialog();
+			
+			
+		}
+		
 	}
 	
 	/**
 	 * 发送消息并将该消息添加到UI显示
 	 */
 	private void sendAndAddMessage(){
-		String msgStr = chat_input.getText().toString().trim();
+		String msgStr = chat_input.getText().toString();
 		if(!"".equals(msgStr)){
 			//发送消息
 			IpMessageProtocol sendMsg = new IpMessageProtocol();
@@ -163,7 +213,7 @@ public class ChatActivity extends BasicActivity implements OnClickListener,Recei
 			sendMsg.setSenderName(selfName);
 			sendMsg.setSenderHost(selfGroup);
 			sendMsg.setCommandNo(IpMessageConst.IPMSG_SENDMSG);
-			sendMsg.setAdditionalSection(msgStr);
+			sendMsg.setAdditionalSection(msgStr.trim());
 			InetAddress sendto = null;
 			try {
 				sendto = InetAddress.getByName(receiverIp);
@@ -177,14 +227,19 @@ public class ChatActivity extends BasicActivity implements OnClickListener,Recei
 			//添加消息到显示list
 			ChatMessage selfMsg = new ChatMessage("localhost", selfName, msgStr, new Date());
 			selfMsg.setSelfMsg(true);	//设置为自身消息
-			msgList.add(selfMsg);	
 			
+			adapter.addMessage(selfMsg);
+			
+			
+		//	adapter.notifyDataSetChanged();//更新UI	
+			chat_input.setText("");
+		
 		}else{
 			makeTextShort("不能发送空内容");
 		}
 		
-		chat_input.setText("");
-		adapter.notifyDataSetChanged();//更新UI
+	
+	//	adapter.notifyDataSetChanged();//更新UI
 	}
 
 	@Override
@@ -263,4 +318,93 @@ public class ChatActivity extends BasicActivity implements OnClickListener,Recei
 			netTcpFileSendThread.start();	//启动线程
 		}
 	}
+	/**
+	 * 创建一个表情选择对话框
+	 */
+	private void createExpressionDialog() {
+		builder = new Dialog(ChatActivity.this);
+		GridView gridView = createGridView();
+		Log.i("TAG", "333333333333333");
+		builder.setContentView(gridView);
+		builder.setTitle("默认表情");
+		builder.show();
+		Log.i("TAG", "221111111111111111");
+		gridView.setOnItemClickListener(new OnItemClickListener() {
+			
+			@Override
+			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
+					long arg3) {
+				Bitmap bitmap = null;
+				bitmap = BitmapFactory.decodeResource(getResources(), imageIds[arg2 % imageIds.length]);
+				ImageSpan imageSpan = new ImageSpan(ChatActivity.this, bitmap);
+				String str = null;
+				if(arg2<10){
+					str = "f00"+arg2;
+				}else if(arg2<100){
+					str = "f0"+arg2;
+				}else{
+					str = "f"+arg2;
+				}
+				SpannableString spannableString = new SpannableString(str);
+				spannableString.setSpan(imageSpan, 0, 4, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+				chat_input.append(spannableString);
+				builder.dismiss();
+			}
+		});
+	}
+	
+	
+	/**
+	 * 生成一个表情对话框中的gridview
+	 * @return
+	 */
+	private GridView createGridView() {
+		final GridView view = new GridView(this);
+		List<Map<String,Object>> listItems = new ArrayList<Map<String,Object>>();
+		//生成107个表情的id，封装
+		for(int i = 0; i < 107; i++){
+			try {
+				if(i<10){
+					Field field = R.drawable.class.getDeclaredField("f00" + i);
+					int resourceId = Integer.parseInt(field.get(null).toString());
+					imageIds[i] = resourceId;
+				}else if(i<100){
+					Field field = R.drawable.class.getDeclaredField("f0" + i);
+					int resourceId = Integer.parseInt(field.get(null).toString());
+					imageIds[i] = resourceId;
+				}else{
+					Field field = R.drawable.class.getDeclaredField("f" + i);
+					int resourceId = Integer.parseInt(field.get(null).toString());
+					imageIds[i] = resourceId;
+				}
+			} catch (NumberFormatException e) {
+				e.printStackTrace();
+			} catch (SecurityException e) {
+				e.printStackTrace();
+			} catch (IllegalArgumentException e) {
+				e.printStackTrace();
+			} catch (NoSuchFieldException e) {
+				e.printStackTrace();
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			}
+	        Map<String,Object> listItem = new HashMap<String,Object>();
+			listItem.put("image", imageIds[i]);
+			listItems.add(listItem);
+		}
+		
+		SimpleAdapter simpleAdapter =new SimpleAdapter(this, listItems, R.layout.team_layout_single_expression_cell, new String[]{"image"}, new int[]{R.id.image});
+		view.setAdapter(simpleAdapter);
+	
+	
+		view.setAdapter(simpleAdapter);
+		view.setNumColumns(6);
+		view.setBackgroundColor(Color.rgb(214, 211, 214));
+		view.setHorizontalSpacing(1);
+		view.setVerticalSpacing(1);
+		view.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT,LayoutParams.WRAP_CONTENT));
+		view.setGravity(Gravity.CENTER);
+		return view;
+	}
+
 }

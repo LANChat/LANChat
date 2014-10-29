@@ -84,13 +84,19 @@
             android:background="@color/gray_blue"
             android:gravity="center_vertical"
             >
-            <EditText android:id="@+id/chat_input"
-                android:layout_width="fill_parent"
+
+            <ImageView
+                android:id="@+id/chat_face"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/chat_icon_smiles" />
+
+            <EditText
+                android:id="@+id/chat_input"
+                android:layout_width="214dp"
                 android:layout_height="fill_parent"
-                android:layout_weight="1"
                 android:layout_marginLeft="5dip"
-                android:singleLine="true"
-                />
+                android:singleLine="true" />
             
             <Button android:id="@+id/chat_send"
                 android:layout_width="wrap_content"
