@@ -1,4 +1,4 @@
-package com.lanchat.adapter;
+package com.lanchat.data;
 
 import java.lang.reflect.Field;
 import java.util.regex.Matcher;
@@ -50,7 +50,7 @@ public class ExpressionUtil {
                 ImageSpan imageSpan = new ImageSpan(bitmap);
            
                 int end = matcher.start() + key.length();//通过图片资源id来得到bitmap，用�?��ImageSpan来包�?
-    
+                spannableString.setSpan(imageSpan, matcher.start(), end, Spannable.SPAN_INCLUSIVE_EXCLUSIVE);	//����ͼƬ�滻�ַ����й涨��λ����
                 if (end < spannableString.length()) {						//如果整个字符串还未验证完，则继续。�?确保�?��的表情都能够被添加到
                     dealExpression(context,spannableString,  patten, end);
                 }

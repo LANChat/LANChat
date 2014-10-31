@@ -13,6 +13,8 @@ import com.lanchat.data.ChatMessage;
 
 
 
+import com.lanchat.data.ExpressionUtil;
+
 import android.content.Context;
 import android.content.res.Resources;
 import android.text.SpannableString;
@@ -121,7 +123,7 @@ private class ViewHolder{
 	
 		RelativeLayout.LayoutParams rl_chat_left=((RelativeLayout.LayoutParams)lchat_layout.getLayoutParams());
 		RelativeLayout.LayoutParams rl_tv_msg_left=((RelativeLayout.LayoutParams)text.getLayoutParams());
-		if(!msg.isSelfMsg()){	//根据本地的mac地址来判断该条信息是属于本人所说还是对方所说
+		if(msg.isSelfMsg()){	//根据本地的ip地址来判断该条信息是属于本人所说还是对方所说
 																			//如果是自己说的，则显示在右边；如果是对方所说，则显示在左边，在这里也可以利用IP地址来判断
 			rl_chat_left.addRule(RelativeLayout.ALIGN_PARENT_LEFT,-1);
 			rl_chat_left.addRule(RelativeLayout.ALIGN_PARENT_RIGHT,0);
