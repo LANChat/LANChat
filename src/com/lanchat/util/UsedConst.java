@@ -1,11 +1,11 @@
 package com.lanchat.util;
 
 /*
- * р╩п╘сц╣╫╣дЁёа©
+ * Д╦─Д╨⌡Г■╗Е┬╟Г └Е╦╦И┤▐
  * 
  */
 public class UsedConst {
-	public static final int FILESENDSUCCESS  = 0xFF;	//нд╪Ч╥╒кмЁи╧╕
-	public static final int FILERECEIVEINFO = 0xFE;		//╫сйунд╪Чё╛╟Э╨╛нд╪Чпео╒
-	public static final int FILERECEIVESUCCESS = 0xFD;		//╫сйунд╪Чё╛╟Э╨╛нд╪Чпео╒
+	public static final int FILESENDSUCCESS  = 0xFF;	//Ф√┤Д╩╤Е▐▒И─│Ф┬░Е┼÷
+	public static final int FILERECEIVEINFO = 0xFE;		//Ф▌╔Ф■╤Ф√┤Д╩╤О╪▄Е▄┘Е░╚Ф√┤Д╩╤Д©║Ф│╞
+	public static final int FILERECEIVESUCCESS = 0xFD;		//Ф▌╔Ф■╤Ф√┤Д╩╤О╪▄Е▄┘Е░╚Ф√┤Д╩╤Д©║Ф│╞
 }

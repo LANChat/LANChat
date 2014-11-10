@@ -16,18 +16,11 @@ import android.widget.BaseExpandableListAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-/**
- * Ö÷½çÃæÓÃ»§¶ş¼¶ÁĞ±íµÄadapter
- * 
- * 
- * 2014/10/18
- *
- */
 public class UserExpandableListAdapter extends BaseExpandableListAdapter {
-	private Context context;	//¸¸activity
+	private Context context;	//çˆ¶activity
 	protected Resources res;
-	private LayoutInflater mChildInflater;	//ÓÃÓÚ¼ÓÔØ·Ö×éµÄ²¼¾Öxml
-	private LayoutInflater mGroupInflater;	//ÓÃÓÚ¼ÓÔØ¶ÔÓ¦·Ö×éÓÃ»§µÄ²¼¾Öxml
+	private LayoutInflater mChildInflater;	//ç”¨äºåŠ è½½åˆ†ç»„çš„å¸ƒå±€xml
+	private LayoutInflater mGroupInflater;	//ç”¨äºåŠ è½½å¯¹åº”åˆ†ç»„ç”¨æˆ·çš„å¸ƒå±€xml
 	List<String> groups = new ArrayList<String>();
 	List<List<User>> children = new ArrayList<List<User>>();
 	
@@ -41,18 +34,18 @@ public class UserExpandableListAdapter extends BaseExpandableListAdapter {
 	}
 
 	@Override
-	public Object getChild(int groupPosition, int childPosition) { //¸ù¾İ×éË÷ÒıºÍitemË÷Òı£¬È¡µÃlistitem
+	public Object getChild(int groupPosition, int childPosition) { //æ ¹æ®ç»„ç´¢å¼•å’Œitemç´¢å¼•ï¼Œå–å¾—listitem
 		// TODO Auto-generated method stub
 		return children.get(groupPosition).get(childPosition);
 	}
 
 	@Override
-	public long getChildId(int groupPosition, int childPosition) { //·µ»ØitemË÷Òı
+	public long getChildId(int groupPosition, int childPosition) { //è¿”å›itemç´¢å¼•
 		// TODO Auto-generated method stub
 		return childPosition;
 	}
 
-	//·Ö×éÊÓÍ¼
+	//åˆ†ç»„è§†å›¾
 	@Override
 	public View getChildView(int groupPosition, int childPosition,
 			boolean isLastChild, View convertView, ViewGroup parent) {
@@ -69,17 +62,17 @@ public class UserExpandableListAdapter extends BaseExpandableListAdapter {
 		TextView childIp = (TextView) myView.findViewById(R.id.child_ip);
 		final TextView childInfoNo = (TextView) myView.findViewById(R.id.child_infos);
 		ImageView childImg = (ImageView) myView.findViewById(R.id.user_img);
-		childTv.setText(user.getUserName());	//ÓÃ»§ÃûÏÔÊ¾
-		childIp.setText(user.getIp());	//IPÏÔÊ¾
+		childTv.setText(user.getUserName());	//ç”¨æˆ·åæ˜¾ç¤º
+		childIp.setText(user.getIp());	//IPæ˜¾ç¤º
 		childImg.setImageDrawable(res.getDrawable(R.drawable.ic_launcher));
-		if(user.getMsgCount() == 0){	//ÈôÃ»ÓĞÎ´½ÓÊÕµÄÏûÏ¢£¬Ôò²»ÏÔÊ¾
+		if(user.getMsgCount() == 0){	//è‹¥æ²¡æœ‰æœªæ¥æ”¶çš„æ¶ˆæ¯ï¼Œåˆ™ä¸æ˜¾ç¤º
 			childInfoNo.setVisibility(View.GONE);
 		}else{
 			childInfoNo.setText("" + user.getMsgCount());
 		}
 		
 		
-		myView.setOnClickListener(new View.OnClickListener(){	//µã»÷×ÓÏî
+		myView.setOnClickListener(new View.OnClickListener(){	//ç‚¹å‡»å­é¡¹
 
 			@Override
 			public void onClick(View v) {
@@ -99,30 +92,30 @@ public class UserExpandableListAdapter extends BaseExpandableListAdapter {
 	}
 
 	@Override
-	public int getChildrenCount(int groupPosition) {//¸ù¾İ×éË÷Òı·µ»Ø·Ö×éµÄ×ÓitemÊı
+	public int getChildrenCount(int groupPosition) {//æ ¹æ®ç»„ç´¢å¼•è¿”å›åˆ†ç»„çš„å­itemæ•°
 		// TODO Auto-generated method stub
 		return children.get(groupPosition).size();
 	}
 
 	@Override
-	public Object getGroup(int groupPosition) { //¸ù¾İ×éË÷Òı·µ»Ø×é
+	public Object getGroup(int groupPosition) { //æ ¹æ®ç»„ç´¢å¼•è¿”å›ç»„
 		// TODO Auto-generated method stub
 		return children.get(groupPosition);
 	}
 
 	@Override
-	public int getGroupCount() { //·µ»Ø·Ö×éÊı
+	public int getGroupCount() { //è¿”å›åˆ†ç»„æ•°
 		// TODO Auto-generated method stub
 		return groups.size();
 	}
 
 	@Override
-	public long getGroupId(int groupPosition) { //·µ»Ø·Ö×éË÷Òı
+	public long getGroupId(int groupPosition) { //è¿”å›åˆ†ç»„ç´¢å¼•
 		// TODO Auto-generated method stub
 		return groupPosition;
 	}
 
-	//×éÊÓÍ¼
+	//ç»„è§†å›¾
 	@Override
 	public View getGroupView(int groupPosition, boolean isExpanded,
 			View convertView, ViewGroup parent) {
@@ -133,14 +126,14 @@ public class UserExpandableListAdapter extends BaseExpandableListAdapter {
 			return myView;
 		}
 		
-		//Ò»¼¶²Ëµ¥ÊÕ·Å×´Ì¬¶ÔÓ¦Í¼±êÉèÖÃ
+		//ä¸€çº§èœå•æ”¶æ”¾çŠ¶æ€å¯¹åº”å›¾æ ‡è®¾ç½®
 		ImageView groupImg = (ImageView) myView.findViewById(R.id.group_img);
 		if(isExpanded)
 			groupImg.setImageDrawable(res.getDrawable(R.drawable.group_exp));
 		else
 			groupImg.setImageDrawable(res.getDrawable(R.drawable.group_notexp));
 		
-		//ÉèÖÃÎÄ±¾ÄÚÈİ
+		//è®¾ç½®æ–‡æœ¬å†…å®¹
 		TextView groupTv = (TextView) myView.findViewById(R.id.group);
 		groupTv.setText(groups.get(groupPosition));
 		TextView groupOnLine = (TextView) myView.findViewById(R.id.group_onlinenum);
@@ -150,13 +143,13 @@ public class UserExpandableListAdapter extends BaseExpandableListAdapter {
 	}
 
 	@Override
-	public boolean hasStableIds() { //ĞĞÊÇ·ñ¾ßÓĞÎ¨Ò»id
+	public boolean hasStableIds() { //è¡Œæ˜¯å¦å…·æœ‰å”¯ä¸€id
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public boolean isChildSelectable(int groupPosition, int childPosition) { //ĞĞÊÇ·ñ¿ÉÑ¡
+	public boolean isChildSelectable(int groupPosition, int childPosition) { //è¡Œæ˜¯å¦å¯é€‰
 		// TODO Auto-generated method stub
 		return false;
 	}

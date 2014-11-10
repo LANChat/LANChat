@@ -1,68 +1,68 @@
 package com.lanchat.util;
 
 /**
- * Ğ­Òé³£Á¿
+ * åè®®å¸¸é‡
  * @author wangqi
  * 2014/10/21
  */
 public class IpMessageConst {
-	public static final int VERSION = 0x001;		// °æ±¾ºÅ
-	public static final int PORT = 0x0979;			// ¶Ë¿ÚºÅ£¬·É¸ëĞ­ÒéÄ¬ÈÏ¶Ë¿Ú2425
+	public static final int VERSION = 0x001;		// ç‰ˆæœ¬å·
+	public static final int PORT = 0x0979;			// ç«¯å£å·ï¼Œé£é¸½åè®®é»˜è®¤ç«¯å£2425
 	
-	// ÃüÁî
-	public static final int IPMSG_NOOPERATION		 = 0x00000000;	//²»½øĞĞÈÎºÎ²Ù×÷
-	public static final int IPMSG_BR_ENTRY			 = 0x00000001;	//ÓÃ»§ÉÏÏß
-	public static final int IPMSG_BR_EXIT		 	 = 0x00000002;	//ÓÃ»§ÍË³ö
-	public static final int IPMSG_ANSENTRY			 = 0x00000003;	//Í¨±¨ÔÚÏß
-	public static final int IPMSG_BR_ABSENCE		 = 0x00000004;	//¸ÄÎªÈ±Ï¯Ä£Ê½
+	// å‘½ä»¤
+	public static final int IPMSG_NOOPERATION		 = 0x00000000;	//ä¸è¿›è¡Œä»»ä½•æ“ä½œ
+	public static final int IPMSG_BR_ENTRY			 = 0x00000001;	//ç”¨æˆ·ä¸Šçº¿
+	public static final int IPMSG_BR_EXIT		 	 = 0x00000002;	//ç”¨æˆ·é€€å‡º
+	public static final int IPMSG_ANSENTRY			 = 0x00000003;	//é€šæŠ¥åœ¨çº¿
+	public static final int IPMSG_BR_ABSENCE		 = 0x00000004;	//æ”¹ä¸ºç¼ºå¸­æ¨¡å¼
 	
-	public static final int IPMSG_BR_ISGETLIST		 = 0x00000010;	//Ñ°ÕÒÓĞĞ§µÄ¿ÉÒÔ·¢ËÍÓÃ»§ÁĞ±íµÄ³ÉÔ±
-	public static final int IPMSG_OKGETLIST			 = 0x00000011;	//Í¨ÖªÓÃ»§ÁĞ±íÒÑ¾­»ñµÃ
-	public static final int IPMSG_GETLIST			 = 0x00000012;	//ÓÃ»§ÁĞ±í·¢ËÍÇëÇó
-	public static final int IPMSG_ANSLIST			 = 0x00000013;	//Ó¦´ğÓÃ»§ÁĞ±í·¢ËÍÇëÇó
+	public static final int IPMSG_BR_ISGETLIST		 = 0x00000010;	//å¯»æ‰¾æœ‰æ•ˆçš„å¯ä»¥å‘é€ç”¨æˆ·åˆ—è¡¨çš„æˆå‘˜
+	public static final int IPMSG_OKGETLIST			 = 0x00000011;	//é€šçŸ¥ç”¨æˆ·åˆ—è¡¨å·²ç»è·å¾—
+	public static final int IPMSG_GETLIST			 = 0x00000012;	//ç”¨æˆ·åˆ—è¡¨å‘é€è¯·æ±‚
+	public static final int IPMSG_ANSLIST			 = 0x00000013;	//åº”ç­”ç”¨æˆ·åˆ—è¡¨å‘é€è¯·æ±‚
 	public static final int IPMSG_FILE_MTIME		 = 0x00000014;	//
 	public static final int IPMSG_FILE_CREATETIME	 = 0x00000016;	//
 	public static final int IPMSG_BR_ISGETLIST2		 = 0x00000018;	//
 	
-	public static final int IPMSG_SENDMSG 			 = 0x00000020;	//·¢ËÍÏûÏ¢
-	public static final int IPMSG_RECVMSG 			 = 0x00000021;	//Í¨±¨ÊÕµ½ÏûÏ¢
-	public static final int IPMSG_READMSG 			 = 0x00000030;	//ÏûÏ¢´ò¿ªÍ¨Öª
-	public static final int IPMSG_DELMSG 			 = 0x00000031;	//ÏûÏ¢¶ªÆúÍ¨Öª
-	public static final int IPMSG_ANSREADMSG		 = 0x00000032;	//ÏûÏ¢´ò¿ªÈ·ÈÏÍ¨Öª£¨version-8ÖĞÌí¼Ó£©
+	public static final int IPMSG_SENDMSG 			 = 0x00000020;	//å‘é€æ¶ˆæ¯
+	public static final int IPMSG_RECVMSG 			 = 0x00000021;	//é€šæŠ¥æ”¶åˆ°æ¶ˆæ¯
+	public static final int IPMSG_READMSG 			 = 0x00000030;	//æ¶ˆæ¯æ‰“å¼€é€šçŸ¥
+	public static final int IPMSG_DELMSG 			 = 0x00000031;	//æ¶ˆæ¯ä¸¢å¼ƒé€šçŸ¥
+	public static final int IPMSG_ANSREADMSG		 = 0x00000032;	//æ¶ˆæ¯æ‰“å¼€ç¡®è®¤é€šçŸ¥ï¼ˆversion-8ä¸­æ·»åŠ ï¼‰
 	
-	public static final int IPMSG_GETINFO			 = 0x00000040;	//»ñµÃIPMSG°æ±¾ĞÅÏ¢
-	public static final int IPMSG_SENDINFO			 = 0x00000041;	//·¢ËÍIPMSG°æ±¾ĞÅÏ¢
+	public static final int IPMSG_GETINFO			 = 0x00000040;	//è·å¾—IPMSGç‰ˆæœ¬ä¿¡æ¯
+	public static final int IPMSG_SENDINFO			 = 0x00000041;	//å‘é€IPMSGç‰ˆæœ¬ä¿¡æ¯
 	
-	public static final int IPMSG_GETABSENCEINFO	 = 0x00000050;	//»ñµÃÈ±Ï¯ĞÅÏ¢
-	public static final int IPMSG_SENDABSENCEINFO	 = 0x00000051;	//·¢ËÍÈ±Ï¯ĞÅÏ¢
+	public static final int IPMSG_GETABSENCEINFO	 = 0x00000050;	//è·å¾—ç¼ºå¸­ä¿¡æ¯
+	public static final int IPMSG_SENDABSENCEINFO	 = 0x00000051;	//å‘é€ç¼ºå¸­ä¿¡æ¯
 	
-	public static final int IPMSG_GETFILEDATA		 = 0x00000060;	//ÎÄ¼ş´«ÊäÇëÇó
-	public static final int IPMSG_RELEASEFILES		 = 0x00000061;	//¶ªÆú¸½¼ÓÎÄ¼ş
-	public static final int IPMSG_GETDIRFILES		 = 0x00000062;	//¸½×ÅÍ³¼ÆÎÄ¼şÇëÇó
+	public static final int IPMSG_GETFILEDATA		 = 0x00000060;	//æ–‡ä»¶ä¼ è¾“è¯·æ±‚
+	public static final int IPMSG_RELEASEFILES		 = 0x00000061;	//ä¸¢å¼ƒé™„åŠ æ–‡ä»¶
+	public static final int IPMSG_GETDIRFILES		 = 0x00000062;	//é™„ç€ç»Ÿè®¡æ–‡ä»¶è¯·æ±‚
 	
-	public static final int IPMSG_GETPUBKEY			 = 0x00000072;	//»ñµÃRSA¹«Ô¿
-	public static final int IPMSG_ANSPUBKEY			 = 0x00000073;	//Ó¦´ğRSA¹«Ô¿
+	public static final int IPMSG_GETPUBKEY			 = 0x00000072;	//è·å¾—RSAå…¬é’¥
+	public static final int IPMSG_ANSPUBKEY			 = 0x00000073;	//åº”ç­”RSAå…¬é’¥
 	
 	/* option for all command */
-	public static final int IPMSG_ABSENCEOPT 		 = 0x00000100;	//È±Ï¯Ä£Ê½
-	public static final int IPMSG_SERVEROPT 		 = 0x00000200;	//·şÎñÆ÷£¨±£Áô£©
-	public static final int IPMSG_DIALUPOPT 		 = 0x00010000;	//·¢ËÍ¸ø¸öÈË
-	public static final int IPMSG_FILEATTACHOPT 	 = 0x00200000;	//¸½¼ÓÎÄ¼ş
-	public static final int IPMSG_ENCRYPTOPT		 = 0x00400000;	//¼ÓÃÜ
+	public static final int IPMSG_ABSENCEOPT 		 = 0x00000100;	//ç¼ºå¸­æ¨¡å¼
+	public static final int IPMSG_SERVEROPT 		 = 0x00000200;	//æœåŠ¡å™¨ï¼ˆä¿ç•™ï¼‰
+	public static final int IPMSG_DIALUPOPT 		 = 0x00010000;	//å‘é€ç»™ä¸ªäºº
+	public static final int IPMSG_FILEATTACHOPT 	 = 0x00200000;	//é™„åŠ æ–‡ä»¶
+	public static final int IPMSG_ENCRYPTOPT		 = 0x00400000;	//åŠ å¯†
 	
 	/*  option for send command  */
-	public static final int IPMSG_SENDCHECKOPT = 0x00000100;	//´«ËÍÑéÖ¤
-	public static final int IPMSG_SECRETOPT = 0x00000200;		//ÃÜ·âµÄÏûÏ¢
-	public static final int IPMSG_BROADCASTOPT = 0x00000400;	//¹ã²¥
-	public static final int IPMSG_MULTICASTOPT = 0x00000800;	//¶à²¥
-	public static final int IPMSG_NOPOPUPOPT = 0x00001000;		//£¨²»ÔÙÓĞĞ§£©
-	public static final int IPMSG_AUTORETOPT = 0x00002000;		//×Ô¶¯Ó¦´ğ(Ping-pong protection)
-	public static final int IPMSG_RETRYOPT = 0x00004000;		//ÖØ·¢±êÊ¶£¨ÓÃÓÚÇëÇóÓÃ»§ÁĞ±íÊ±£©
-	public static final int IPMSG_PASSWORDOPT = 0x00008000;		//ÃÜÂë
-	public static final int IPMSG_NOLOGOPT = 0x00020000;		//Ã»ÓĞÈÕÖ¾ÎÄ¼ş
-	public static final int IPMSG_NEWMUTIOPT = 0x00040000;		//ĞÂ°æ±¾µÄ¶à²¥£¨±£Áô£©
-	public static final int IPMSG_NOADDLISTOPT = 0x00080000;	//²»Ìí¼ÓÓÃ»§ÁĞ±í Notice to the members outside of BR_ENTRY
-	public static final int IPMSG_READCHECKOPT = 0x00100000;	//ÃÜ·âÏûÏ¢ÑéÖ¤£¨version8ÖĞÌí¼Ó£©
+	public static final int IPMSG_SENDCHECKOPT = 0x00000100;	//ä¼ é€éªŒè¯
+	public static final int IPMSG_SECRETOPT = 0x00000200;		//å¯†å°çš„æ¶ˆæ¯
+	public static final int IPMSG_BROADCASTOPT = 0x00000400;	//å¹¿æ’­
+	public static final int IPMSG_MULTICASTOPT = 0x00000800;	//å¤šæ’­
+	public static final int IPMSG_NOPOPUPOPT = 0x00001000;		//ï¼ˆä¸å†æœ‰æ•ˆï¼‰
+	public static final int IPMSG_AUTORETOPT = 0x00002000;		//è‡ªåŠ¨åº”ç­”(Ping-pong protection)
+	public static final int IPMSG_RETRYOPT = 0x00004000;		//é‡å‘æ ‡è¯†ï¼ˆç”¨äºè¯·æ±‚ç”¨æˆ·åˆ—è¡¨æ—¶ï¼‰
+	public static final int IPMSG_PASSWORDOPT = 0x00008000;		//å¯†ç 
+	public static final int IPMSG_NOLOGOPT = 0x00020000;		//æ²¡æœ‰æ—¥å¿—æ–‡ä»¶
+	public static final int IPMSG_NEWMUTIOPT = 0x00040000;		//æ–°ç‰ˆæœ¬çš„å¤šæ’­ï¼ˆä¿ç•™ï¼‰
+	public static final int IPMSG_NOADDLISTOPT = 0x00080000;	//ä¸æ·»åŠ ç”¨æˆ·åˆ—è¡¨ Notice to the members outside of BR_ENTRY
+	public static final int IPMSG_READCHECKOPT = 0x00100000;	//å¯†å°æ¶ˆæ¯éªŒè¯ï¼ˆversion8ä¸­æ·»åŠ ï¼‰
 	public static final int IPMSG_SECRETEXOPT = (IPMSG_READCHECKOPT|IPMSG_SECRETOPT);
 	
 	/* encryption flags for encrypt command */

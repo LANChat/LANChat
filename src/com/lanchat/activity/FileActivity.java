@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.os.Message;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -22,100 +23,102 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 
+public class FileActivity extends BasicActivity implements OnItemClickListener,
+		OnClickListener {
+	private final static String TAG = "FileActivity";
 
-public class FileActivity extends BasicActivity implements OnItemClickListener, OnClickListener {
-private final static String TAG = "FileActivity";
-	
-	private String path = "/";	//µ±Ç°Â·¾¶
-	
+	private String path = "/"; // å½“å‰è·¯å¾„
+
 	private ListView itemList;
 	private TextView filePath;
 	private Button sendButton;
-	
+
 	private List<Map<String, Object>> adapterList;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.files);	
-		findViews();	
+		requestWindowFeature(Window.FEATURE_NO_TITLE);
+		setContentView(R.layout.files);
+		findViews();
 		refreshListItems(path);
 	}
-	// Ë¢ĞÂListView
+
+	// åˆ·æ–°ListView
 	private void refreshListItems(String path) {
 		// TODO Auto-generated method stub
 		filePath.setText(path);
 		adapterList = buildListForSimpleAdapter(path);
-		SimpleAdapter listAdapter = new SimpleAdapter(this, adapterList, R.layout.file_item, 
-				new String[]{"name", "path", "img"}, 
-				new int[]{R.id.file_name, R.id.file_path, R.id.file_img});
-		
+		SimpleAdapter listAdapter = new SimpleAdapter(this, adapterList,
+				R.layout.file_item, new String[] { "name", "path", "img" },
+				new int[] { R.id.file_name, R.id.file_path, R.id.file_img });
+
 		itemList.setAdapter(listAdapter);
 		itemList.setOnItemClickListener(this);
 		itemList.setSelection(0);
-		
+
 	}
 
 	private List<Map<String, Object>> buildListForSimpleAdapter(String path) {
 		// TODO Auto-generated method stub
-		File nowFile = new File(path);		
-		adapterList = new ArrayList<Map<String, Object>>();	
-		//·ÅÉÏ¸ùÄ¿Â¼
+		File nowFile = new File(path);
+		adapterList = new ArrayList<Map<String, Object>>();
+		// æ”¾ä¸Šæ ¹ç›®å½•
 		Map<String, Object> root = new HashMap<String, Object>();
 		root.put("name", "/");
 		root.put("img", R.drawable.file_root);
-		root.put("path", "»Ø¸ùÄ¿Â¼");
+		root.put("path", "å›æ ¹ç›®å½•");
 		adapterList.add(root);
-		
-		//·ÅÉÏ¸¸Ä¿Â¼
+
+		// æ”¾ä¸Šçˆ¶ç›®å½•
 		Map<String, Object> pMap = new HashMap<String, Object>();
 		pMap.put("name", "..");
 		pMap.put("img", R.drawable.file_parent);
-		pMap.put("path", "ÉÏÒ»¼¶");
+		pMap.put("path", "ä¸Šä¸€çº§");
 		adapterList.add(pMap);
-		
-		if(!nowFile.isDirectory()){	//ÈôÊÇµ±Ç°Â·¾¶¶ÔÓ¦µÄÊÇÎÄ¼ş£¬Ôò·µ»Ø
-			sendButton.setEnabled(true);	//·¢ËÍ°´Å¥¿ÉÓÃ
+
+		if (!nowFile.isDirectory()) { // è‹¥æ˜¯å½“å‰è·¯å¾„å¯¹åº”çš„æ˜¯æ–‡ä»¶ï¼Œåˆ™è¿”å›
+			sendButton.setEnabled(true); // å‘é€æŒ‰é’®å¯ç”¨
 			return adapterList;
 		}
-		
-		File[] files = nowFile.listFiles();	//µÃµ½pathÏÂËùÓĞÎÄ¼ş
-		
-		for(File file:files){
+
+		File[] files = nowFile.listFiles(); // å¾—åˆ°pathä¸‹æ‰€æœ‰æ–‡ä»¶
+
+		for (File file : files) {
 			Map<String, Object> map = new HashMap<String, Object>();
 			map.put("name", file.getName());
 			map.put("path", file.getPath());
-			if(file.isDirectory()){
+			if (file.isDirectory()) {
 				map.put("img", R.drawable.file_directory);
-			}else{
+			} else {
 				map.put("img", R.drawable.file_doc);
 			}
 			adapterList.add(map);
 		}
-		
-		sendButton.setEnabled(false);	//µ±Ç°Â·¾¶¶ÔÓ¦µÄÊÇÎÄ¼ş¼Ğ£¬·¢ËÍ°´Å¥²»¿ÉÓÃ
+
+		sendButton.setEnabled(false); // å½“å‰è·¯å¾„å¯¹åº”çš„æ˜¯æ–‡ä»¶å¤¹ï¼Œå‘é€æŒ‰é’®ä¸å¯ç”¨
 		return adapterList;
 	}
+
 	private void findViews() {
 		// TODO Auto-generated method stub
 		itemList = (ListView) findViewById(R.id.file_detail);
 		filePath = (TextView) findViewById(R.id.file_path);
 		sendButton = (Button) findViewById(R.id.file_send);
 		sendButton.setOnClickListener(this);
-		sendButton.setEnabled(false);	//¿ªÊ¼Ê±²»¿Éµã»÷£¬Ö»ÓĞÑ¡ÖĞµÄÂ·¾¶ÊÇÎÄ¼şÊ±²Å¿ÉÒÔµã»÷
+		sendButton.setEnabled(false); // å¼€å§‹æ—¶ä¸å¯ç‚¹å‡»ï¼Œåªæœ‰é€‰ä¸­çš„è·¯å¾„æ˜¯æ–‡ä»¶æ—¶æ‰å¯ä»¥ç‚¹å‡»
 	}
 
 	@Override
 	public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
 		// TODO Auto-generated method stub
-		Log.i(TAG, "Î»ÖÃ[" + position + "]ÉÏµÄitem±»µã»÷");
-		if(position == 0){	//»Ø¸ùÄ¿Â¼
+		if (position == 0) { // å›æ ¹ç›®å½•
 			path = "/";
 			refreshListItems(path);
-		}else if(position == 1){	//»Øµ½ÉÏÒ»¼¶
+		} else if (position == 1) { // å›åˆ°ä¸Šä¸€çº§
 			goToParent();
-		}else{
+		} else {
 			path = (String) adapterList.get(position).get("path");
 			refreshListItems(path);
 		}
@@ -124,28 +127,29 @@ private final static String TAG = "FileActivity";
 	private void goToParent() {
 		// TODO Auto-generated method stub
 		File file = new File(path);
-		File pFile = file.getParentFile();	//µÃµ½¸¸ÎÄ¼ş
-		if(pFile == null){
-			Toast.makeText(this, "µ±Ç°Â·¾¶ÒÑ¾­ÊÇ¸ùÄ¿Â¼£¬²»´æÔÚÉÏÒ»¼¶", 
-					Toast.LENGTH_SHORT).show();
+		File pFile = file.getParentFile(); // å¾—åˆ°çˆ¶æ–‡ä»¶
+		if (pFile == null) {
+			Toast.makeText(this, "å½“å‰è·¯å¾„å·²ç»æ˜¯æ ¹ç›®å½•ï¼Œä¸å­˜åœ¨ä¸Šä¸€çº§", Toast.LENGTH_SHORT)
+					.show();
 			refreshListItems(path);
-		}else{
+		} else {
 			path = pFile.getAbsolutePath();
 			refreshListItems(path);
 		}
-	
 	}
+
 	@Override
 	public void onClick(View v) {
 		// TODO Auto-generated method stub
-		
+
 		Intent intent = new Intent();
 		intent.putExtra("filePaths", path);
 		setResult(RESULT_OK, intent);
 		finish();
 	}
+
 	@Override
 	public void processMessage(Message msg) {
-		// TODO Auto-generated method stub	
+		// TODO Auto-generated method stub
 	}
 }

@@ -29,82 +29,78 @@ import android.os.Message;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.Window;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.ExpandableListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-
 public class InitActivity extends BasicActivity implements OnClickListener {
-public static String hostIp;
-	
+	public static String hostIp;
 	private ExpandableListView userList;
-	
 	private UserExpandableListAdapter adapter;
-	private List<String> strGroups; //ËùÓĞÒ»¼¶²Ëµ¥Ãû³Æ¼¯ºÏ
+	private List<String> strGroups; // æ‰€æœ‰ä¸€çº§èœå•åç§°é›†åˆ
 	private List<List<User>> children;
-	
 	private TextView totalUser;
 	private Button refreshButton;
-	private TextView ipTextView;;
-    /** Called when the activity is first created. */
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_start);//°ó¶¨Õû¸ö½çÃæ
-        
-        if(!isWifiActive()){	//ÈôwifiÃ»ÓĞ´ò¿ª£¬ÌáÊ¾
-        	Toast.makeText(this, R.string.no_wifi, Toast.LENGTH_LONG).show();
-        }
-        
-        findViews();
-  
-        strGroups = new ArrayList<String>(); //ËùÓĞÒ»¼¶²Ëµ¥Ãû³Æ¼¯ºÏ
+
+	/** Called when the activity is first created. */
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		requestWindowFeature(Window.FEATURE_NO_TITLE);
+		setContentView(R.layout.activity_start);// ç»‘å®šæ•´ä¸ªç•Œé¢
+
+		if (!isWifiActive()) { // è‹¥wifiæ²¡æœ‰æ‰“å¼€ï¼Œæç¤º
+			Toast.makeText(this, R.string.no_wifi, Toast.LENGTH_LONG).show();
+		}
+
+		findViews();
+
+		strGroups = new ArrayList<String>(); // æ‰€æœ‰ä¸€çº§èœå•åç§°é›†åˆ
 		children = new ArrayList<List<User>>();
-        
-        netThreadHelper.connectSocket();	//¿ªÊ¼¼àÌıÊı¾İ
-        netThreadHelper.noticeOnline();	//¹ã²¥ÉÏÏß
-        
-        adapter = new UserExpandableListAdapter(this, strGroups, children);
-        userList.setAdapter(adapter);
-        
-        refreshButton.setOnClickListener(this);
-        refreshViews();
-    }
-    
+
+		netThreadHelper.connectSocket(); // å¼€å§‹ç›‘å¬æ•°æ®
+		netThreadHelper.noticeOnline(); // å¹¿æ’­ä¸Šçº¿
+
+		adapter = new UserExpandableListAdapter(this, strGroups, children);
+		userList.setAdapter(adapter);
+
+		refreshButton.setOnClickListener(this);
+		refreshViews();
+	}
+
 	@Override
 	public void finish() {
 		// TODO Auto-generated method stub
 		super.finish();
-		netThreadHelper.noticeOffline();	//Í¨ÖªÏÂÏß
-		netThreadHelper.disconnectSocket(); //Í£Ö¹¼àÌı
-		
+		netThreadHelper.noticeOffline(); // é€šçŸ¥ä¸‹çº¿
+		netThreadHelper.disconnectSocket(); // åœæ­¢ç›‘å¬
+
 	}
 
 	private void findViews() {
 		// TODO Auto-generated method stub
-		totalUser =(TextView) findViewById(R.id.totalUser);
+		totalUser = (TextView) findViewById(R.id.totalUser);
 		userList = (ExpandableListView) findViewById(R.id.userlist);
 		refreshButton = (Button) findViewById(R.id.refresh);
-		ipTextView = (TextView) findViewById(R.id.mymood);
 		hostIp = getLocalIpAddress();
-		ipTextView.setText(hostIp);	//ÉèÖÃIP
 	}
 
 	@Override
 	public void processMessage(Message msg) {
 		// TODO Auto-generated method stub
-		switch(msg.what){
+		switch (msg.what) {
 		case IpMessageConst.IPMSG_BR_ENTRY:
 		case IpMessageConst.IPMSG_BR_EXIT:
 		case IpMessageConst.IPMSG_ANSENTRY:
 		case IpMessageConst.IPMSG_SENDMSG:
-			refreshViews();	
+			refreshViews();
 			break;
 		}
 	}
-	
+
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		// TODO Auto-generated method stub
@@ -112,129 +108,109 @@ public static String hostIp;
 			exit();
 		return true;
 	}
-	
-	//¸üĞÂÊı¾İºÍUIÏÔÊ¾
-	private void refreshViews(){	
-		//Çå¿ÕÊı¾İ
+
+	// æ›´æ–°æ•°æ®å’ŒUIæ˜¾ç¤º
+	private void refreshViews() {
+		// æ¸…ç©ºæ•°æ®
 		strGroups.clear();
 		children.clear();
-		
-		Map<String,User> currentUsers = new HashMap<String, User>();
+
+		Map<String, User> currentUsers = new HashMap<String, User>();
 		currentUsers.putAll(netThreadHelper.getUsers());
 		Queue<ChatMessage> msgQueue = netThreadHelper.getReceiveMsgQueue();
-		Map<String, Integer> ip2Msg = new HashMap<String, Integer>();	//IPµØÖ·ÓëÎ´ÊÕÏûÏ¢¸öÊıµÄmap
-		//±éÀúÏûÏ¢¶ÓÁĞ£¬Ìî³äip2Msg
+		Map<String, Integer> ip2Msg = new HashMap<String, Integer>(); // IPåœ°å€ä¸æœªæ”¶æ¶ˆæ¯ä¸ªæ•°çš„map
+		// éå†æ¶ˆæ¯é˜Ÿåˆ—ï¼Œå¡«å……ip2Msg
 		Iterator<ChatMessage> it = msgQueue.iterator();
-		while(it.hasNext()){
+		while (it.hasNext()) {
 			ChatMessage chatMsg = it.next();
-			String ip = chatMsg.getSenderIp();	//µÃµ½ÏûÏ¢·¢ËÍÕßIP
+			String ip = chatMsg.getSenderIp(); // å¾—åˆ°æ¶ˆæ¯å‘é€è€…IP
 			Integer tempInt = ip2Msg.get(ip);
-			if(tempInt == null){	//ÈômapÖĞÃ»ÓĞIP¶ÔÓ¦µÄÏûÏ¢¸öÊı,Ôò°ÑIPÌí¼Ó½øÈ¥,ÖµÎª1
+			if (tempInt == null) { // è‹¥mapä¸­æ²¡æœ‰IPå¯¹åº”çš„æ¶ˆæ¯ä¸ªæ•°,åˆ™æŠŠIPæ·»åŠ è¿›å»,å€¼ä¸º1
 				ip2Msg.put(ip, 1);
-			}else{	//ÈôÒÑ¾­ÓĞ¶ÔÓ¦ip£¬Ôò½«ÆäÖµ¼ÓÒ»
-				ip2Msg.put(ip, ip2Msg.get(ip)+1);
+			} else { // è‹¥å·²ç»æœ‰å¯¹åº”ipï¼Œåˆ™å°†å…¶å€¼åŠ ä¸€
+				ip2Msg.put(ip, ip2Msg.get(ip) + 1);
 			}
 		}
-		
-		//±éÀúcurrentUsers,¸üĞÂstrGroupsºÍchildren
+
+		// éå†currentUsers,æ›´æ–°strGroupså’Œchildren
 		Iterator<String> iterator = currentUsers.keySet().iterator();
 		while (iterator.hasNext()) {
-			User user = currentUsers.get(iterator.next());	
-			//ÉèÖÃÃ¿¸öÔÚÏßÓÃ»§¶ÔÓ¦µÄÎ´ÊÕÏûÏ¢¸öÊı
-			if(ip2Msg.get(user.getIp()) == null){
+			User user = currentUsers.get(iterator.next());
+			// è®¾ç½®æ¯ä¸ªåœ¨çº¿ç”¨æˆ·å¯¹åº”çš„æœªæ”¶æ¶ˆæ¯ä¸ªæ•°
+			if (ip2Msg.get(user.getIp()) == null) {
 				user.setMsgCount(0);
-			}else{
+			} else {
 				user.setMsgCount(ip2Msg.get(user.getIp()));
 			}
-			
+
 			String groupName = user.getGroupName();
 			int index = strGroups.indexOf(groupName);
-			if(index == -1){ //Ã»ÓĞÏàÓ¦·Ö×é£¬ÔòÌí¼Ó·Ö×é£¬²¢Ìí¼Ó¶ÔÓ¦child
+			if (index == -1) { // æ²¡æœ‰ç›¸åº”åˆ†ç»„ï¼Œåˆ™æ·»åŠ åˆ†ç»„ï¼Œå¹¶æ·»åŠ å¯¹åº”child
 				strGroups.add(groupName);
-//				List<Map<String,String>> childData = new ArrayList<Map<String,String>>();
-//				Map<String, String> child = new HashMap<String,String>();
-//				child.put("userName", user.getUserName());
-//				childData.add(child);
-//				children.add(childData);
-				
 				List<User> childData = new ArrayList<User>();
 				childData.add(user);
 				children.add(childData);
-			}else{	//ÒÑ´æÔÚ·Ö×é£¬Ôò½«¶ÔÓ¦childÌí¼Óµ½Ïà¶ÔÓ¦·Ö×éÖĞ
-//				Map<String,String> child = new HashMap<String,String>();
-//				child.put("userName", user.getUserName());
-//				children.get(index).add(child);
+			} else { // å·²å­˜åœ¨åˆ†ç»„ï¼Œåˆ™å°†å¯¹åº”childæ·»åŠ åˆ°ç›¸å¯¹åº”åˆ†ç»„ä¸­
 				children.get(index).add(user);
 			}
-			
 		}
-		
-		//¸üĞÂgroups
-//		for(int i = 0; i < strGroups.size(); i++){
-//			Map<String,String> groupMap = new HashMap<String,String>();
-//			groupMap.put("group", strGroups.get(i));
-//			groups.add(groupMap);
-//		}
-		
-		
-		adapter.notifyDataSetChanged();	//¸üĞÂExpandableListView
-		
-		String countStr = "µ±Ç°ÓĞ" + currentUsers.size() +"¸öÓÃ»§ÔÚÏß";
-        totalUser.setText(countStr);	//¸üĞÂTextView
-		
+		adapter.notifyDataSetChanged(); // æ›´æ–°ExpandableListView
+		String countStr = "å½“å‰æœ‰" + currentUsers.size() + "ä¸ªç”¨æˆ·åœ¨çº¿";
+		totalUser.setText(countStr); // æ›´æ–°TextView
+
 	}
 
 	@Override
 	public void onClick(View v) {
 		// TODO Auto-generated method stub
-		if(v.equals(refreshButton)){	//ÈôÊÇË¢ĞÂ
+		if (v.equals(refreshButton)) { // è‹¥æ˜¯åˆ·æ–°
 			netThreadHelper.refreshUsers();
 			refreshViews();
 		}
-	
 	}
-	
-	//ÅĞ¶ÏwifiÊÇ·ñ´ò¿ª
-	public boolean isWifiActive(){
+
+	// åˆ¤æ–­wifiæ˜¯å¦æ‰“å¼€
+	public boolean isWifiActive() {
 		ConnectivityManager mConnectivity = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-		if(mConnectivity != null){
+		if (mConnectivity != null) {
 			NetworkInfo[] infos = mConnectivity.getAllNetworkInfo();
-			
-			if(infos != null){
-				for(NetworkInfo ni: infos){
-					if("WIFI".equals(ni.getTypeName()) && ni.isConnected())
+
+			if (infos != null) {
+				for (NetworkInfo ni : infos) {
+					if ("WIFI".equals(ni.getTypeName()) && ni.isConnected())
 						return true;
 				}
 			}
 		}
-		
 		return false;
 	}
-	
-	//µÃµ½±¾»úIPµØÖ·
-	public String getLocalIpAddress(){
-		try{
-			Enumeration<NetworkInterface> en = NetworkInterface.getNetworkInterfaces(); 
-			while(en.hasMoreElements()){
+
+	// å¾—åˆ°æœ¬æœºIPåœ°å€
+	public String getLocalIpAddress() {
+		try {
+			Enumeration<NetworkInterface> en = NetworkInterface
+					.getNetworkInterfaces();
+			while (en.hasMoreElements()) {
 				NetworkInterface nif = en.nextElement();
 				Enumeration<InetAddress> enumIpAddr = nif.getInetAddresses();
-				while(enumIpAddr.hasMoreElements()){
+				while (enumIpAddr.hasMoreElements()) {
 					InetAddress mInetAddress = enumIpAddr.nextElement();
-					if(!mInetAddress.isLoopbackAddress() && InetAddressUtils.isIPv4Address(mInetAddress.getHostAddress())){
+					if (!mInetAddress.isLoopbackAddress()
+							&& InetAddressUtils.isIPv4Address(mInetAddress
+									.getHostAddress())) {
 						return mInetAddress.getHostAddress().toString();
 					}
 				}
 			}
-		}catch(SocketException ex){
-			Log.e("InitActivity", "»ñÈ¡±¾µØIPµØÖ·Ê§°Ü");
+		} catch (SocketException ex) {
+			Log.e("InitActivity", "è·å–æœ¬åœ°IPåœ°å€å¤±è´¥");
 		}
-		
+
 		return null;
 	}
-	
-	//»ñÈ¡±¾»úMACµØÖ·
-	public String getLocalMacAddress(){
-		WifiManager wifi = (WifiManager)getSystemService(Context.WIFI_SERVICE);
+	// è·å–æœ¬æœºMACåœ°å€
+	public String getLocalMacAddress() {
+		WifiManager wifi = (WifiManager) getSystemService(Context.WIFI_SERVICE);
 		WifiInfo info = wifi.getConnectionInfo();
 		return info.getMacAddress();
 	}

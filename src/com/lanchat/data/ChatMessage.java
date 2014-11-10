@@ -5,20 +5,19 @@ import java.util.Date;
 
 
 /**
- * ÏûÏ¢Àà
+ * æ¶ˆæ¯ç±»
  * 
  * 2014/10/18
  */
 public class ChatMessage {
-	private String senderIp;	//ÏûÏ¢·¢ËÍÕßµÄip
-	private String senderName;	//ÏûÏ¢·¢ËÍÕßµÄÃû×Ö
-//	private String reciverIp;	//ÏûÏ¢½ÓÊÕÕßµÄip
-	private String msg;			//ĞÅÏ¢ÄÚÈİ
-	private Date time;		//·¢ËÍÊ±¼ä :¸ñÊ½£º
-	private boolean selfMsg;	//ÊÇ·ñ×Ô¼º·¢ËÍ
+	private String senderIp;	//æ¶ˆæ¯å‘é€è€…çš„ip
+	private String senderName;	//æ¶ˆæ¯å‘é€è€…çš„åå­—
+	private String msg;			//ä¿¡æ¯å†…å®¹
+	private Date time;		//å‘é€æ—¶é—´ :æ ¼å¼ï¼š
+	private boolean selfMsg;	//æ˜¯å¦è‡ªå·±å‘é€
 	
 	public ChatMessage(){
-		this.selfMsg = false;	//Ä¬ÈÏ²»ÊÇ×Ô¼º
+		this.selfMsg = false;	//é»˜è®¤ä¸æ˜¯è‡ªå·±
 	}
 	
 	public ChatMessage(String senderIp, String senderName, 
@@ -26,10 +25,9 @@ public class ChatMessage {
 		super();
 		this.senderIp = senderIp;
 		this.senderName = senderName;
-//		this.reciverIp = reciverIp;
 		this.msg = msg;
 		this.time = time;
-		this.selfMsg = false;	//Ä¬ÈÏ²»ÊÇ×Ô¼º
+		this.selfMsg = false;	//é»˜è®¤ä¸æ˜¯è‡ªå·±
 	}
 	public String getSenderIp() {
 		return senderIp;
@@ -62,7 +60,7 @@ public class ChatMessage {
 		this.selfMsg = selfMsg;
 	}
 	
-	public String getTimeStr(){	//·µ»Ø¸ñÊ½ÎªHH:mm:ssµÄÊ±¼ä×Ö·û´®
+	public String getTimeStr(){	//è¿”å›æ ¼å¼ä¸ºHH:mm:ssçš„æ—¶é—´å­—ç¬¦ä¸²
 		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
 		
 		return sdf.format(time);

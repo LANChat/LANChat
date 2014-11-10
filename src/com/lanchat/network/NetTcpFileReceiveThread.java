@@ -18,17 +18,17 @@ import com.lanchat.util.*;
 
 
 /**
- * Tcp½ÓÊÕÎÄ¼şÏß³ÌÀà
+ * Tcpæ¥æ”¶æ–‡ä»¶çº¿ç¨‹ç±»
  *
- * 2014/10/20
+ * 2014/10/28
  */
 public class NetTcpFileReceiveThread implements Runnable {
 	private final static String TAG = "NetTcpFileReceiveThread";
 	
-	private String[] fileInfos;	//ÎÄ¼şĞÅÏ¢×Ö·ûÊı×é
+	private String[] fileInfos;	//æ–‡ä»¶ä¿¡æ¯å­—ç¬¦æ•°ç»„
 	private String senderIp;
-	private long packetNo;	//°ü±àºÅ
-	private String savePath;	//ÎÄ¼ş±£´æÂ·¾¶
+	private long packetNo;	//åŒ…ç¼–å·
+	private String savePath;	//æ–‡ä»¶ä¿å­˜è·¯å¾„
 	
 	private String selfName;
 	private String selfGroup;
@@ -44,13 +44,13 @@ public class NetTcpFileReceiveThread implements Runnable {
 		this.fileInfos = fileInfos;
 		this.senderIp = senderIp;
 		
-		selfName = "android·É¸ë";
-		selfGroup = "android";
-		savePath= "/mnt/sdcard/FeigeRec/";
+		selfName = "Android";
+		selfGroup = "Android";
+		savePath= "/mnt/sdcard/LANChatRec/";
 		
-		//ÅĞ¶Ï½ÓÊÕÎÄ¼şµÄÎÄ¼ş¼ĞÊÇ·ñ´æÔÚ£¬Èô²»´æÔÚ£¬Ôò´´½¨
+		//åˆ¤æ–­æ¥æ”¶æ–‡ä»¶çš„æ–‡ä»¶å¤¹æ˜¯å¦å­˜åœ¨ï¼Œè‹¥ä¸å­˜åœ¨ï¼Œåˆ™åˆ›å»º
 		File fileDir = new File(savePath);
-		if( !fileDir.exists()){	//Èô²»´æÔÚ
+		if( !fileDir.exists()){	//è‹¥ä¸å­˜åœ¨
 			fileDir.mkdir();
 		}
 		
@@ -58,10 +58,9 @@ public class NetTcpFileReceiveThread implements Runnable {
 	@Override
 	public void run() {
 		// TODO Auto-generated method stub
-		for(int i = 0; i < fileInfos.length; i++){	//Ñ­»·½ÓÊÜÃ¿¸öÎÄ¼ş
-			//×¢Òâ£¬ÕâÀïÔİÊ±Î´´¦ÀíÎÄ¼şÃû°üº¬Ã°ºÅµÄÇé¿ö£¬·É¸ëĞ­Òé¹æ¶¨ÖĞÈôÎÄ¼şÃû°üº¬Ã°ºÅ£¬ÔòÓÃË«Ã°ºÅÌæ´ú¡£Ğè×ö´¦Àí£¬ÕâÀïÔİÊ±Ã»×ö
-			String[] fileInfo = fileInfos[i].split(":");	//Ê¹ÓÃ:·Ö¸ôµÃµ½ÎÄ¼şĞÅÏ¢Êı×é
-			//ÏÈ·¢ËÍÒ»¸öÖ¸¶¨»ñÈ¡ÎÄ¼şµÄ°ü
+		for(int i = 0; i < fileInfos.length; i++){	//å¾ªç¯æ¥å—æ¯ä¸ªæ–‡ä»¶
+			String[] fileInfo = fileInfos[i].split(":");	//ä½¿ç”¨:åˆ†éš”å¾—åˆ°æ–‡ä»¶ä¿¡æ¯æ•°ç»„
+			//å…ˆå‘é€ä¸€ä¸ªæŒ‡å®šè·å–æ–‡ä»¶çš„åŒ…
 			IpMessageProtocol ipmsgPro = new IpMessageProtocol();
 			ipmsgPro.setVersion(String.valueOf(IpMessageConst.VERSION));
 			ipmsgPro.setCommandNo(IpMessageConst.IPMSG_GETFILEDATA);
@@ -73,36 +72,36 @@ public class NetTcpFileReceiveThread implements Runnable {
 			
 			try {
 				socket = new Socket(senderIp, IpMessageConst.PORT);
-				Log.d(TAG, "ÒÑÁ¬½ÓÉÏ·¢ËÍ¶Ë");
+				Log.d(TAG, "å·²è¿æ¥ä¸Šå‘é€ç«¯");
 				bos = new BufferedOutputStream(socket.getOutputStream());
 				
-				//·¢ËÍÊÕÈ¡ÎÄ¼ş·É¸ëÃüÁî
+				//å‘é€æ”¶å–æ–‡ä»¶å‘½ä»¤
 				byte[] sendBytes = ipmsgPro.getProtocolString().getBytes("gbk");
 				bos.write(sendBytes, 0, sendBytes.length);
 				bos.flush();
 				
-				Log.d(TAG, "Í¨¹ıTCP·¢ËÍ½ÓÊÕÖ¸¶¨ÎÄ¼şÃüÁî¡£ÃüÁîÄÚÈİÊÇ£º" + ipmsgPro.getProtocolString());
+				Log.d(TAG, "é€šè¿‡TCPå‘é€æ¥æ”¶æŒ‡å®šæ–‡ä»¶å‘½ä»¤ã€‚å‘½ä»¤å†…å®¹æ˜¯ï¼š" + ipmsgPro.getProtocolString());
 				
 				
-				//½ÓÊÕÎÄ¼ş
+				//æ¥æ”¶æ–‡ä»¶
 				File receiveFile = new File(savePath + fileInfo[1]);
-				if(receiveFile.exists()){	//Èô¶ÔÓ¦ÎÄ¼şÃûµÄÎÄ¼şÒÑ´æÔÚ£¬ÔòÉ¾³ıÔ­À´µÄÎÄ¼ş
+				if(receiveFile.exists()){	//è‹¥å¯¹åº”æ–‡ä»¶åçš„æ–‡ä»¶å·²å­˜åœ¨ï¼Œåˆ™åˆ é™¤åŸæ¥çš„æ–‡ä»¶
 					receiveFile.delete();
 				}
 				fbos = new BufferedOutputStream(new FileOutputStream(receiveFile));
-				Log.d(TAG, "×¼±¸¿ªÊ¼½ÓÊÕÎÄ¼ş....");
+				Log.d(TAG, "å‡†å¤‡å¼€å§‹æ¥æ”¶æ–‡ä»¶....");
 				bis = new BufferedInputStream(socket.getInputStream());
 				int len = 0;
-				long sended = 0;	//ÒÑ½ÓÊÕÎÄ¼ş´óĞ¡
-				long total = Long.parseLong(fileInfo[2], 16);	//ÎÄ¼ş×Ü´óĞ¡
+				long sended = 0;	//å·²æ¥æ”¶æ–‡ä»¶å¤§å°
+				long total = Long.parseLong(fileInfo[2], 16);	//æ–‡ä»¶æ€»å¤§å°
 				int temp = 0;
 				while((len = bis.read(readBuffer)) != -1){
 					fbos.write(readBuffer, 0, len);
 					fbos.flush();
 					
-					sended += len;	//ÒÑ½ÓÊÕÎÄ¼ş´óĞ¡
-					int sendedPer = (int) (sended * 100 / total);	//½ÓÊÕ°Ù·Ö±È
-					if(temp != sendedPer){	//Ã¿Ôö¼ÓÒ»¸ö°Ù·Ö±È£¬·¢ËÍÒ»¸ömessage
+					sended += len;	//å·²æ¥æ”¶æ–‡ä»¶å¤§å°
+					int sendedPer = (int) (sended * 100 / total);	//æ¥æ”¶ç™¾åˆ†æ¯”
+					if(temp != sendedPer){	//æ¯å¢åŠ ä¸€ä¸ªç™¾åˆ†æ¯”ï¼Œå‘é€ä¸€ä¸ªmessage
 						int[] msgObj = {i, sendedPer};
 						Message msg = new Message();
 						msg.what = UsedConst.FILERECEIVEINFO;
@@ -113,7 +112,7 @@ public class NetTcpFileReceiveThread implements Runnable {
 					if(len < readBuffer.length) break;
 				}
 				
-				Log.i(TAG, "µÚ" + (i+1) + "¸öÎÄ¼ş½ÓÊÕ³É¹¦£¬ÎÄ¼şÃûÎª"  + fileInfo[1]);
+				Log.i(TAG, "ç¬¬" + (i+1) + "ä¸ªæ–‡ä»¶æ¥æ”¶æˆåŠŸï¼Œæ–‡ä»¶åä¸º"  + fileInfo[1]);
 				int[] success = {i+1, fileInfos.length};
 				Message msg4success = new Message();
 				msg4success.what = UsedConst.FILERECEIVESUCCESS;
@@ -123,20 +122,20 @@ public class NetTcpFileReceiveThread implements Runnable {
 			}catch (UnsupportedEncodingException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-				Log.e(TAG, "....ÏµÍ³²»Ö§³ÖGBK±àÂë");
+				Log.e(TAG, "....ç³»ç»Ÿä¸æ”¯æŒGBKç¼–ç ");
 			} catch (UnknownHostException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-				Log.e(TAG, "Ô¶³ÌIPµØÖ·´íÎó");
+				Log.e(TAG, "è¿œç¨‹IPåœ°å€é”™è¯¯");
 			} catch (FileNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-				Log.e(TAG, "ÎÄ¼ş´´½¨Ê§°Ü");
+				Log.e(TAG, "æ–‡ä»¶åˆ›å»ºå¤±è´¥");
 			}catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-				Log.e(TAG, "·¢ÉúIO´íÎó");
-			}finally{	//´¦Àí
+				Log.e(TAG, "å‘ç”ŸIOé”™è¯¯");
+			}finally{	//å¤„ç†
 				
 				if(bos != null){	
 					try {

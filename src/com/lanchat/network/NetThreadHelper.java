@@ -21,11 +21,11 @@ import com.lanchat.activity.*;
 import com.lanchat.util.*;
 
 /**
- * ÍøÂçÍ¨ĞÅ¸¨ÖúÀà
- * ÊµÏÖUDPÍ¨ĞÅÒÔ¼°UDP¶Ë¿Ú¼àÌı
- * ¶Ë¿Ú¼àÌı²ÉÓÃ¶àÏß³Ì·½Ê½
+ * ç½‘ç»œé€šä¿¡è¾…åŠ©ç±»
+ * å®ç°UDPé€šä¿¡ä»¥åŠUDPç«¯å£ç›‘å¬
+ * ç«¯å£ç›‘å¬é‡‡ç”¨å¤šçº¿ç¨‹æ–¹å¼
  * 
- * µ¥ÀıÄ£Ê½
+ * å•ä¾‹æ¨¡å¼
  * 
  * 2014/10/21
  *
@@ -36,31 +36,30 @@ public class NetThreadHelper implements Runnable{
 	
 	private static NetThreadHelper instance;
 	
-	private static final int BUFFERLENGTH = 1024; //»º³å´óĞ¡
-	private boolean onWork = false;	//Ïß³Ì¹¤×÷±êÊ¶
+	private static final int BUFFERLENGTH = 1024; //ç¼“å†²å¤§å°
+	private boolean onWork = false;	//çº¿ç¨‹å·¥ä½œæ ‡è¯†
 	private String selfName;
 	private String selfGroup;
-	
-	private Thread udpThread = null;	//½ÓÊÕUDPÊı¾İÏß³Ì
-	private DatagramSocket udpSocket = null;	//ÓÃÓÚ½ÓÊÕºÍ·¢ËÍudpÊı¾İµÄsocket
-	private DatagramPacket udpSendPacket = null;	//ÓÃÓÚ·¢ËÍµÄudpÊı¾İ°ü
-	private DatagramPacket udpResPacket = null;	//ÓÃÓÚ½ÓÊÕµÄudpÊı¾İ°ü
-	private byte[] resBuffer = new byte[BUFFERLENGTH];	//½ÓÊÕÊı¾İµÄ»º´æ
+	private Thread udpThread = null;	//æ¥æ”¶UDPæ•°æ®çº¿ç¨‹
+	private DatagramSocket udpSocket = null;	//ç”¨äºæ¥æ”¶å’Œå‘é€udpæ•°æ®çš„socket
+	private DatagramPacket udpSendPacket = null;	//ç”¨äºå‘é€çš„udpæ•°æ®åŒ…
+	private DatagramPacket udpResPacket = null;	//ç”¨äºæ¥æ”¶çš„udpæ•°æ®åŒ…
+	private byte[] resBuffer = new byte[BUFFERLENGTH];	//æ¥æ”¶æ•°æ®çš„ç¼“å­˜
 	private byte[] sendBuffer = null;
 	
-	private Map<String,User> users;	//µ±Ç°ËùÓĞÓÃ»§µÄ¼¯ºÏ£¬ÒÔIPÎªKEY
-	private int userCount = 0; //ÓÃ»§¸öÊı¡£×¢Òâ£¬´ËÏîÖµÖ»ÓĞÔÚµ÷ÓÃgetSimpleExpandableListAdapter()²Å»á¸üĞÂ£¬Ä¿µÄÊÇÓëadapterÖĞÓÃ»§¸öÊı±£³ÖÒ»ÖÂ
+	private Map<String,User> users;	//å½“å‰æ‰€æœ‰ç”¨æˆ·çš„é›†åˆï¼Œä»¥IPä¸ºKEY
+	private int userCount = 0; //ç”¨æˆ·ä¸ªæ•°ã€‚æ³¨æ„ï¼Œæ­¤é¡¹å€¼åªæœ‰åœ¨è°ƒç”¨getSimpleExpandableListAdapter()æ‰ä¼šæ›´æ–°ï¼Œç›®çš„æ˜¯ä¸adapterä¸­ç”¨æˆ·ä¸ªæ•°ä¿æŒä¸€è‡´
 	
-	private Queue<ChatMessage> receiveMsgQueue;	//ÏûÏ¢¶ÓÁĞ,ÔÚÃ»ÓĞÁÄÌì´°¿ÚÊ±½«½ÓÊÕµÄÏûÏ¢·Åµ½Õâ¸ö¶ÓÁĞÖĞ
-	private Vector<ReceiveMsgListener> listeners;	//ReceiveMsgListenerÈİÆ÷£¬µ±Ò»¸öÁÄÌì´°¿Ú´ò¿ªÊ±£¬½«Æä¼ÓÈë¡£Ò»¶¨Òª¼ÇµÃÊÊÊ±½«ÆäÒÆ³ı
+	private Queue<ChatMessage> receiveMsgQueue;	//æ¶ˆæ¯é˜Ÿåˆ—,åœ¨æ²¡æœ‰èŠå¤©çª—å£æ—¶å°†æ¥æ”¶çš„æ¶ˆæ¯æ”¾åˆ°è¿™ä¸ªé˜Ÿåˆ—ä¸­
+	private Vector<ReceiveMsgListener> listeners;	//ReceiveMsgListenerå®¹å™¨ï¼Œå½“ä¸€ä¸ªèŠå¤©çª—å£æ‰“å¼€æ—¶ï¼Œå°†å…¶åŠ å…¥ã€‚ä¸€å®šè¦è®°å¾—é€‚æ—¶å°†å…¶ç§»é™¤
 	
 	private NetThreadHelper(){
 		users = new HashMap<String, User>();
 		receiveMsgQueue = new ConcurrentLinkedQueue<ChatMessage>();
 		listeners = new Vector<ReceiveMsgListener>();
 		
-		selfName = "±¾»ú";
-		selfGroup = "ÎÒµÄÈº×é";
+		selfName = "Android";
+		selfGroup = "è‡ªå·±";
 	}
 	
 	public static NetThreadHelper newInstance(){
@@ -81,14 +80,14 @@ public class NetThreadHelper implements Runnable{
 		return receiveMsgQueue;
 	}
 	
-	//Ìí¼Ólistenerµ½ÈİÆ÷ÖĞ
+	//æ·»åŠ listeneråˆ°å®¹å™¨ä¸­
 	public void addReceiveMsgListener(ReceiveMsgListener listener){
 		if(!listeners.contains(listener)){
 			listeners.add(listener);
 		}
 	}
 	
-	//´ÓÈİÆ÷ÖĞÒÆ³ıÏàÓ¦listener
+	//ä»å®¹å™¨ä¸­ç§»é™¤ç›¸åº”listener
 	public void removeReceiveMsgListener(ReceiveMsgListener listener){
 		if(listeners.contains(listener)){
 			listeners.remove(listener);
@@ -97,7 +96,7 @@ public class NetThreadHelper implements Runnable{
 	
 	/**
 	 * 
-	 * ´Ë·½·¨ÓÃÀ´ÅĞ¶ÏÊÇ·ñÓĞ´¦ÓÚÇ°Ì¨µÄÁÄÌì´°¿Ú¶ÔÓ¦µÄactivityÀ´½ÓÊÕÊÕµ½µÄÊı¾İ¡£
+	 * æ­¤æ–¹æ³•ç”¨æ¥åˆ¤æ–­æ˜¯å¦æœ‰å¤„äºå‰å°çš„èŠå¤©çª—å£å¯¹åº”çš„activityæ¥æ¥æ”¶æ”¶åˆ°çš„æ•°æ®ã€‚
 	 */
 	private boolean receiveMsg(ChatMessage msg){
 		for(int i = 0; i < listeners.size(); i++){
@@ -110,48 +109,48 @@ public class NetThreadHelper implements Runnable{
 	}
 	
 	
-	public void noticeOnline(){	// ·¢ËÍÉÏÏß¹ã²¥
+	public void noticeOnline(){	// å‘é€ä¸Šçº¿å¹¿æ’­
 		IpMessageProtocol ipmsgSend = new IpMessageProtocol();
 		ipmsgSend.setVersion(String.valueOf(IpMessageConst.VERSION));
 		ipmsgSend.setSenderName(selfName);
 		ipmsgSend.setSenderHost(selfGroup);
-		ipmsgSend.setCommandNo(IpMessageConst.IPMSG_BR_ENTRY);	//ÉÏÏßÃüÁî
-		ipmsgSend.setAdditionalSection(selfName + "\0" );	//¸½¼ÓĞÅÏ¢Àï¼ÓÈëÓÃ»§ÃûºÍ·Ö×éĞÅÏ¢
+		ipmsgSend.setCommandNo(IpMessageConst.IPMSG_BR_ENTRY);	//ä¸Šçº¿å‘½ä»¤
+		ipmsgSend.setAdditionalSection(selfName + "\0" );	//é™„åŠ ä¿¡æ¯é‡ŒåŠ å…¥ç”¨æˆ·åå’Œåˆ†ç»„ä¿¡æ¯
 		
 		InetAddress broadcastAddr;
 		try {
-			broadcastAddr = InetAddress.getByName("255.255.255.255");	//¹ã²¥µØÖ·
-			sendUdpData(ipmsgSend.getProtocolString()+"\0", broadcastAddr, IpMessageConst.PORT);	//·¢ËÍÊı¾İ
+			broadcastAddr = InetAddress.getByName("255.255.255.255");	//å¹¿æ’­åœ°å€
+			sendUdpData(ipmsgSend.getProtocolString()+"\0", broadcastAddr, IpMessageConst.PORT);	//å‘é€æ•°æ®
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			Log.e(TAG, "noticeOnline()....¹ã²¥µØÖ·ÓĞÎó");
+			Log.e(TAG, "noticeOnline()....å¹¿æ’­åœ°å€æœ‰è¯¯");
 		}
 		
 	}
 	
-	public void noticeOffline(){	//·¢ËÍÏÂÏß¹ã²¥
+	public void noticeOffline(){	//å‘é€ä¸‹çº¿å¹¿æ’­
 		IpMessageProtocol ipmsgSend = new IpMessageProtocol();
 		ipmsgSend.setVersion(String.valueOf(IpMessageConst.VERSION));
 		ipmsgSend.setSenderName(selfName);
 		ipmsgSend.setSenderHost(selfGroup);
-		ipmsgSend.setCommandNo(IpMessageConst.IPMSG_BR_EXIT);	//ÏÂÏßÃüÁî
-		ipmsgSend.setAdditionalSection(selfName + "\0" + selfGroup);	//¸½¼ÓĞÅÏ¢Àï¼ÓÈëÓÃ»§ÃûºÍ·Ö×éĞÅÏ¢
+		ipmsgSend.setCommandNo(IpMessageConst.IPMSG_BR_EXIT);	//ä¸‹çº¿å‘½ä»¤
+		ipmsgSend.setAdditionalSection(selfName + "\0" + selfGroup);	//é™„åŠ ä¿¡æ¯é‡ŒåŠ å…¥ç”¨æˆ·åå’Œåˆ†ç»„ä¿¡æ¯
 		
 		InetAddress broadcastAddr;
 		try {
-			broadcastAddr = InetAddress.getByName("255.255.255.255");	//¹ã²¥µØÖ·
-			sendUdpData(ipmsgSend.getProtocolString() + "\0", broadcastAddr, IpMessageConst.PORT);	//·¢ËÍÊı¾İ
+			broadcastAddr = InetAddress.getByName("255.255.255.255");	//å¹¿æ’­åœ°å€
+			sendUdpData(ipmsgSend.getProtocolString() + "\0", broadcastAddr, IpMessageConst.PORT);	//å‘é€æ•°æ®
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
-			Log.e(TAG, "noticeOnline()....¹ã²¥µØÖ·ÓĞÎó");
+			Log.e(TAG, "noticeOnline()....å¹¿æ’­åœ°å€æœ‰è¯¯");
 		}
 
 	}
 	
-	public void refreshUsers(){	//Ë¢ĞÂÔÚÏßÓÃ»§
-		users.clear();	//Çå¿ÕÔÚÏßÓÃ»§ÁĞ±í
-		noticeOnline(); //·¢ËÍÉÏÏßÍ¨Öª
+	public void refreshUsers(){	//åˆ·æ–°åœ¨çº¿ç”¨æˆ·
+		users.clear();	//æ¸…ç©ºåœ¨çº¿ç”¨æˆ·åˆ—è¡¨
+		noticeOnline(); //å‘é€ä¸Šçº¿é€šçŸ¥
 		BasicActivity.sendEmptyMessage(IpMessageConst.IPMSG_BR_ENTRY);
 	}
 	
@@ -176,12 +175,12 @@ public class NetThreadHelper implements Runnable{
 				}
 				
 				udpThread = null;
-				Log.e(TAG, "UDPÊı¾İ°ü½ÓÊÕÊ§°Ü£¡Ïß³ÌÍ£Ö¹");
+				Log.e(TAG, "UDPæ•°æ®åŒ…æ¥æ”¶å¤±è´¥ï¼çº¿ç¨‹åœæ­¢");
 				break;
 			} 
 			
 			if(udpResPacket.getLength() == 0){
-				Log.i(TAG, "ÎŞ·¨½ÓÊÕUDPÊı¾İ»òÕß½ÓÊÕµ½µÄUDPÊı¾İÎª¿Õ");
+				Log.i(TAG, "æ— æ³•æ¥æ”¶UDPæ•°æ®æˆ–è€…æ¥æ”¶åˆ°çš„UDPæ•°æ®ä¸ºç©º");
 				continue;
 			}
 			String ipmsgStr = "";
@@ -190,103 +189,103 @@ public class NetThreadHelper implements Runnable{
 			} catch (UnsupportedEncodingException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-				Log.e(TAG, "½ÓÊÕÊı¾İÊ±£¬ÏµÍ³²»Ö§³ÖGBK±àÂë");
-			}//½ØÈ¡ÊÕµ½µÄÊı¾İ
-			Log.i(TAG, "½ÓÊÕµ½µÄUDPÊı¾İÄÚÈİÎª:" + ipmsgStr);
+				Log.e(TAG, "æ¥æ”¶æ•°æ®æ—¶ï¼Œç³»ç»Ÿä¸æ”¯æŒGBKç¼–ç ");
+			}//æˆªå–æ”¶åˆ°çš„æ•°æ®
+			Log.i(TAG, "æ¥æ”¶åˆ°çš„UDPæ•°æ®å†…å®¹ä¸º:" + ipmsgStr);
 			IpMessageProtocol ipmsgPro = new IpMessageProtocol(ipmsgStr);	//
 			int commandNo = ipmsgPro.getCommandNo();
-			int commandNo2 = 0x000000FF & commandNo;	//»ñÈ¡ÃüÁî×Ö
+			int commandNo2 = 0x000000FF & commandNo;	//è·å–å‘½ä»¤å­—
 			switch(commandNo2){
-			case IpMessageConst.IPMSG_BR_ENTRY:	{	//ÊÕµ½ÉÏÏßÊı¾İ°ü£¬Ìí¼ÓÓÃ»§£¬²¢»ØËÍIPMSG_ANSENTRYÓ¦´ğ¡£
-				addUser(ipmsgPro);	//Ìí¼ÓÓÃ»§
+			case IpMessageConst.IPMSG_BR_ENTRY:	{	//æ”¶åˆ°ä¸Šçº¿æ•°æ®åŒ…ï¼Œæ·»åŠ ç”¨æˆ·ï¼Œå¹¶å›é€IPMSG_ANSENTRYåº”ç­”ã€‚
+				addUser(ipmsgPro);	//æ·»åŠ ç”¨æˆ·
 				
 				BasicActivity.sendEmptyMessage(IpMessageConst.IPMSG_BR_ENTRY);
 				
-				//ÏÂÃæ¹¹Ôì»ØËÍ±¨ÎÄÄÚÈİ
+				//ä¸‹é¢æ„é€ å›é€æŠ¥æ–‡å†…å®¹
 				IpMessageProtocol ipmsgSend = new IpMessageProtocol();
 				ipmsgSend.setVersion(String.valueOf(IpMessageConst.VERSION));
 				ipmsgSend.setSenderName(selfName);
 				ipmsgSend.setSenderHost(selfGroup);
-				ipmsgSend.setCommandNo(IpMessageConst.IPMSG_ANSENTRY);	//»ØËÍ±¨ÎÄÃüÁî
-				ipmsgSend.setAdditionalSection(selfName + "\0" );	//¸½¼ÓĞÅÏ¢Àï¼ÓÈëÓÃ»§ÃûºÍ·Ö×éĞÅÏ¢
+				ipmsgSend.setCommandNo(IpMessageConst.IPMSG_ANSENTRY);	//å›é€æŠ¥æ–‡å‘½ä»¤
+				ipmsgSend.setAdditionalSection(selfName + "\0" );	//é™„åŠ ä¿¡æ¯é‡ŒåŠ å…¥ç”¨æˆ·åå’Œåˆ†ç»„ä¿¡æ¯
 				
-				sendUdpData(ipmsgSend.getProtocolString(), udpResPacket.getAddress(), udpResPacket.getPort());	//·¢ËÍÊı¾İ
+				sendUdpData(ipmsgSend.getProtocolString(), udpResPacket.getAddress(), udpResPacket.getPort());	//å‘é€æ•°æ®
 			}	
 				break;
 			
-			case IpMessageConst.IPMSG_ANSENTRY:	{	//ÊÕµ½ÉÏÏßÓ¦´ğ£¬¸üĞÂÔÚÏßÓÃ»§ÁĞ±í
+			case IpMessageConst.IPMSG_ANSENTRY:	{	//æ”¶åˆ°ä¸Šçº¿åº”ç­”ï¼Œæ›´æ–°åœ¨çº¿ç”¨æˆ·åˆ—è¡¨
 				addUser(ipmsgPro);
 				BasicActivity.sendEmptyMessage(IpMessageConst.IPMSG_ANSENTRY);
 			}	
 				break;
 			
-			case IpMessageConst.IPMSG_BR_EXIT:{	//ÊÕµ½ÏÂÏß¹ã²¥£¬É¾³ıusersÖĞ¶ÔÓ¦µÄÖµ
+			case IpMessageConst.IPMSG_BR_EXIT:{	//æ”¶åˆ°ä¸‹çº¿å¹¿æ’­ï¼Œåˆ é™¤usersä¸­å¯¹åº”çš„å€¼
 				String userIp = udpResPacket.getAddress().getHostAddress();
 				users.remove(userIp);
 				BasicActivity.sendEmptyMessage(IpMessageConst.IPMSG_BR_EXIT);
 				
-				Log.i(TAG, "¸ù¾İÏÂÏß±¨ÎÄ³É¹¦É¾³ıipÎª" + userIp + "µÄÓÃ»§");
+				Log.i(TAG, "æ ¹æ®ä¸‹çº¿æŠ¥æ–‡æˆåŠŸåˆ é™¤ipä¸º" + userIp + "çš„ç”¨æˆ·");
 			}	
 				break;
 			
-			case IpMessageConst.IPMSG_SENDMSG:{ //ÊÕµ½ÏûÏ¢£¬´¦Àí
-				String senderIp = udpResPacket.getAddress().getHostAddress();	//µÃµ½·¢ËÍÕßIP
-				String senderName = ipmsgPro.getSenderName();	//µÃµ½·¢ËÍÕßµÄÃû³Æ
-				String additionStr = ipmsgPro.getAdditionalSection();	//µÃµ½¸½¼ÓĞÅÏ¢
-				Date time = new Date();	//ÊÕµ½ĞÅÏ¢µÄÊ±¼ä
-				String msgTemp;		//Ö±½ÓÊÕµ½µÄÏûÏ¢£¬¸ù¾İ¼ÓÃÜÑ¡ÏîÅĞ¶ÏÊÇ·ñÊÇ¼ÓÃÜÏûÏ¢
-				String msgStr;		//½âÃÜºóµÄÏûÏ¢ÄÚÈİ
+			case IpMessageConst.IPMSG_SENDMSG:{ //æ”¶åˆ°æ¶ˆæ¯ï¼Œå¤„ç†
+				String senderIp = udpResPacket.getAddress().getHostAddress();	//å¾—åˆ°å‘é€è€…IP
+				String senderName = ipmsgPro.getSenderName();	//å¾—åˆ°å‘é€è€…çš„åç§°
+				String additionStr = ipmsgPro.getAdditionalSection();	//å¾—åˆ°é™„åŠ ä¿¡æ¯
+				Date time = new Date();	//æ”¶åˆ°ä¿¡æ¯çš„æ—¶é—´
+				String msgTemp;		//ç›´æ¥æ”¶åˆ°çš„æ¶ˆæ¯ï¼Œæ ¹æ®åŠ å¯†é€‰é¡¹åˆ¤æ–­æ˜¯å¦æ˜¯åŠ å¯†æ¶ˆæ¯
+				String msgStr;		//è§£å¯†åçš„æ¶ˆæ¯å†…å®¹
 				
-				//ÒÔÏÂÊÇÃüÁîµÄ¸½¼Ó×Ö¶ÎµÄÅĞ¶Ï
+				//ä»¥ä¸‹æ˜¯å‘½ä»¤çš„é™„åŠ å­—æ®µçš„åˆ¤æ–­
 				
-				//ÈôÓĞÃüÁî×Ö´«ËÍÑéÖ¤Ñ¡Ïî£¬ÔòĞè»ØËÍÊÕµ½ÏûÏ¢±¨ÎÄ
+				//è‹¥æœ‰å‘½ä»¤å­—ä¼ é€éªŒè¯é€‰é¡¹ï¼Œåˆ™éœ€å›é€æ”¶åˆ°æ¶ˆæ¯æŠ¥æ–‡
 				if( (commandNo & IpMessageConst.IPMSG_SENDCHECKOPT) == IpMessageConst.IPMSG_SENDCHECKOPT){
-					//¹¹ÔìÍ¨±¨ÊÕµ½ÏûÏ¢±¨ÎÄ
+					//æ„é€ é€šæŠ¥æ”¶åˆ°æ¶ˆæ¯æŠ¥æ–‡
 					IpMessageProtocol ipmsgSend = new IpMessageProtocol();
-					ipmsgSend.setVersion("" +IpMessageConst.VERSION);	//Í¨±¨ÊÕµ½ÏûÏ¢ÃüÁî×Ö
+					ipmsgSend.setVersion("" +IpMessageConst.VERSION);	//é€šæŠ¥æ”¶åˆ°æ¶ˆæ¯å‘½ä»¤å­—
 					ipmsgSend.setCommandNo(IpMessageConst.IPMSG_RECVMSG);
 					ipmsgSend.setSenderName(selfName);
 					ipmsgSend.setSenderHost(selfGroup);
-					ipmsgSend.setAdditionalSection(ipmsgPro.getPacketNo() + "\0");	//¸½¼ÓĞÅÏ¢ÀïÊÇÈ·ÈÏÊÕµ½µÄ°üµÄ±àºÅ
+					ipmsgSend.setAdditionalSection(ipmsgPro.getPacketNo() + "\0");	//é™„åŠ ä¿¡æ¯é‡Œæ˜¯ç¡®è®¤æ”¶åˆ°çš„åŒ…çš„ç¼–å·
 					
-					sendUdpData(ipmsgSend.getProtocolString(), udpResPacket.getAddress(), udpResPacket.getPort());	//·¢ËÍÊı¾İ
+					sendUdpData(ipmsgSend.getProtocolString(), udpResPacket.getAddress(), udpResPacket.getPort());	//å‘é€æ•°æ®
 				}
 				
-				String[] splitStr = additionStr.split("\0"); //Ê¹ÓÃ"\0"·Ö¸î£¬ÈôÓĞ¸½¼ÓÎÄ¼şĞÅÏ¢£¬Ôò»á·Ö¸î³öÀ´
-				msgTemp = splitStr[0]; //½«ÏûÏ¢²¿·ÖÈ¡³ö
+				String[] splitStr = additionStr.split("\0"); //ä½¿ç”¨"\0"åˆ†å‰²ï¼Œè‹¥æœ‰é™„åŠ æ–‡ä»¶ä¿¡æ¯ï¼Œåˆ™ä¼šåˆ†å‰²å‡ºæ¥
+				msgTemp = splitStr[0]; //å°†æ¶ˆæ¯éƒ¨åˆ†å–å‡º
 				
-				//ÊÇ·ñÓĞ·¢ËÍÎÄ¼şµÄÑ¡Ïî.ÈôÓĞ£¬Ôò¸½¼ÓĞÅÏ¢Àï½ØÈ¡³ö¸½´øµÄÎÄ¼şĞÅÏ¢
+				//æ˜¯å¦æœ‰å‘é€æ–‡ä»¶çš„é€‰é¡¹.è‹¥æœ‰ï¼Œåˆ™é™„åŠ ä¿¡æ¯é‡Œæˆªå–å‡ºé™„å¸¦çš„æ–‡ä»¶ä¿¡æ¯
 				if((commandNo & IpMessageConst.IPMSG_FILEATTACHOPT) == IpMessageConst.IPMSG_FILEATTACHOPT){	
-					//ÏÂÃæ½øĞĞ·¢ËÍÎÄ¼şÏà¹Ø´¦Àí
+					//ä¸‹é¢è¿›è¡Œå‘é€æ–‡ä»¶ç›¸å…³å¤„ç†
 					
 					Message msg = new Message();
 					msg.what = (IpMessageConst.IPMSG_SENDMSG | IpMessageConst.IPMSG_FILEATTACHOPT);
-					//×Ö·û´®Êı×é£¬·Ö±ğ·ÅÁË  IP£¬¸½¼ÓÎÄ¼şĞÅÏ¢,·¢ËÍÕßÃû³Æ£¬°üID
+					//å­—ç¬¦ä¸²æ•°ç»„ï¼Œåˆ†åˆ«æ”¾äº†  IPï¼Œé™„åŠ æ–‡ä»¶ä¿¡æ¯,å‘é€è€…åç§°ï¼ŒåŒ…ID
 					String[] extraMsg = {senderIp, splitStr[1],senderName,ipmsgPro.getPacketNo()};	
-					msg.obj = extraMsg;	//¸½¼ÓÎÄ¼şĞÅÏ¢²¿·Ö
+					msg.obj = extraMsg;	//é™„åŠ æ–‡ä»¶ä¿¡æ¯éƒ¨åˆ†
 					BasicActivity.sendMessage(msg);
 					
 					break;
 				}
 				
 				
-				//ÊÇ·ñÓĞ¼ÓÃÜÑ¡Ïî£¬ÔİÈ±
+				//æ˜¯å¦æœ‰åŠ å¯†é€‰é¡¹ï¼Œæš‚ç¼º
 				msgStr = msgTemp;
 				
-				// ÈôÖ»ÊÇ·¢ËÍÏûÏ¢£¬´¦ÀíÏûÏ¢
+				// è‹¥åªæ˜¯å‘é€æ¶ˆæ¯ï¼Œå¤„ç†æ¶ˆæ¯
 				ChatMessage msg = new ChatMessage(senderIp, senderName, msgStr, time);
-				if(!receiveMsg(msg)){	//Ã»ÓĞÁÄÌì´°¿Ú¶ÔÓ¦µÄactivity
-					receiveMsgQueue.add(msg);	// Ìí¼Óµ½ĞÅÏ¢¶ÓÁĞ
+				if(!receiveMsg(msg)){	//æ²¡æœ‰èŠå¤©çª—å£å¯¹åº”çš„activity
+					receiveMsgQueue.add(msg);	// æ·»åŠ åˆ°ä¿¡æ¯é˜Ÿåˆ—
 					BasicActivity.playMsg();
-					//Ö®ºó¿ÉÒÔ×öĞ©UIÌáÊ¾µÄ´¦Àí£¬ÓÃsendMessage()À´½øĞĞ£¬ÔİÈ±
-					BasicActivity.sendEmptyMessage(IpMessageConst.IPMSG_SENDMSG);	//¸üĞÂÖ÷½çÃæUI
+					//ä¹‹åå¯ä»¥åšäº›UIæç¤ºçš„å¤„ç†ï¼Œç”¨sendMessage()æ¥è¿›è¡Œï¼Œæš‚ç¼º
+					BasicActivity.sendEmptyMessage(IpMessageConst.IPMSG_SENDMSG);	//æ›´æ–°ä¸»ç•Œé¢UI
 				}
 				
 				
 			}
 				break;
 				
-			case IpMessageConst.IPMSG_RELEASEFILES:{ //¾Ü¾ø½ÓÊÜÎÄ¼ş
+			case IpMessageConst.IPMSG_RELEASEFILES:{ //æ‹’ç»æ¥å—æ–‡ä»¶
 				BasicActivity.sendEmptyMessage(IpMessageConst.IPMSG_RELEASEFILES);
 			}
 				break;
@@ -294,7 +293,7 @@ public class NetThreadHelper implements Runnable{
 				
 			}	//end of switch
 			
-			if(udpResPacket != null){	//Ã¿´Î½ÓÊÕÍêUDPÊı¾İºó£¬ÖØÖÃ³¤¶È¡£·ñÔò¿ÉÄÜ»áµ¼ÖÂÏÂ´ÎÊÕµ½Êı¾İ°ü±»½Ø¶Ï¡£
+			if(udpResPacket != null){	//æ¯æ¬¡æ¥æ”¶å®ŒUDPæ•°æ®åï¼Œé‡ç½®é•¿åº¦ã€‚å¦åˆ™å¯èƒ½ä¼šå¯¼è‡´ä¸‹æ¬¡æ”¶åˆ°æ•°æ®åŒ…è¢«æˆªæ–­ã€‚
 				udpResPacket.setLength(BUFFERLENGTH);
 			}
 			
@@ -313,106 +312,106 @@ public class NetThreadHelper implements Runnable{
 		
 	}
 	
-	public boolean connectSocket(){	//¼àÌı¶Ë¿Ú£¬½ÓÊÕUDPÊı¾İ
+	public boolean connectSocket(){	//ç›‘å¬ç«¯å£ï¼Œæ¥æ”¶UDPæ•°æ®
 		boolean result = false;
 		
 		try {
 			if(udpSocket == null){
-				udpSocket = new DatagramSocket(IpMessageConst.PORT);	//°ó¶¨¶Ë¿Ú
-				Log.i(TAG, "connectSocket()....°ó¶¨UDP¶Ë¿Ú" + IpMessageConst.PORT + "³É¹¦");
+				udpSocket = new DatagramSocket(IpMessageConst.PORT);	//ç»‘å®šç«¯å£
+				Log.i(TAG, "connectSocket()....ç»‘å®šUDPç«¯å£" + IpMessageConst.PORT + "æˆåŠŸ");
 			}
 			if(udpResPacket == null)
 				udpResPacket = new DatagramPacket(resBuffer, BUFFERLENGTH);
-			onWork = true;  //ÉèÖÃ±êÊ¶ÎªÏß³Ì¹¤×÷
-			startThread();	//Æô¶¯Ïß³Ì½ÓÊÕudpÊı¾İ
+			onWork = true;  //è®¾ç½®æ ‡è¯†ä¸ºçº¿ç¨‹å·¥ä½œ
+			startThread();	//å¯åŠ¨çº¿ç¨‹æ¥æ”¶udpæ•°æ®
 			result = true;
 		} catch (SocketException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			disconnectSocket();
-			Log.e(TAG, "connectSocket()....°ó¶¨UDP¶Ë¿Ú" + IpMessageConst.PORT + "Ê§°Ü");
+			Log.e(TAG, "connectSocket()....ç»‘å®šUDPç«¯å£" + IpMessageConst.PORT + "å¤±è´¥");
 		}
 		
 		return result;
 	}
 	
-	public void disconnectSocket(){	// Í£Ö¹¼àÌıUDPÊı¾İ
-		onWork = false;	// ÉèÖÃÏß³ÌÔËĞĞ±êÊ¶Îª²»ÔËĞĞ
+	public void disconnectSocket(){	// åœæ­¢ç›‘å¬UDPæ•°æ®
+		onWork = false;	// è®¾ç½®çº¿ç¨‹è¿è¡Œæ ‡è¯†ä¸ºä¸è¿è¡Œ
 		
 		stopThread();
 	}
 	
 
-	private void stopThread() {	//Í£Ö¹Ïß³Ì
+	private void stopThread() {	//åœæ­¢çº¿ç¨‹
 	
 		if(udpThread != null){
-			udpThread.interrupt();	//ÈôÏß³Ì¶ÂÈû£¬ÔòÖĞ¶Ï
+			udpThread.interrupt();	//è‹¥çº¿ç¨‹å µå¡ï¼Œåˆ™ä¸­æ–­
 		}
-		Log.i(TAG, "Í£Ö¹¼àÌıUDPÊı¾İ");
+		Log.i(TAG, "åœæ­¢ç›‘å¬UDPæ•°æ®");
 	}
 
-	private void startThread() {	//Æô¶¯Ïß³Ì
+	private void startThread() {	//å¯åŠ¨çº¿ç¨‹
 	
 		if(udpThread == null){
 			udpThread = new Thread(this);
 			udpThread.start();
-			Log.i(TAG, "ÕıÔÚ¼àÌıUDPÊı¾İ");
+			Log.i(TAG, "æ­£åœ¨ç›‘å¬UDPæ•°æ®");
 		}
 	}
 	
-	public synchronized void sendUdpData(String sendStr, InetAddress sendto, int sendPort){	//·¢ËÍUDPÊı¾İ°üµÄ·½·¨
+	public synchronized void sendUdpData(String sendStr, InetAddress sendto, int sendPort){	//å‘é€UDPæ•°æ®åŒ…çš„æ–¹æ³•
 		try {
 			sendBuffer = sendStr.getBytes("gbk");
-			// ¹¹Ôì·¢ËÍµÄUDPÊı¾İ°ü
+			// æ„é€ å‘é€çš„UDPæ•°æ®åŒ…
 			udpSendPacket = new DatagramPacket(sendBuffer, sendBuffer.length, sendto, sendPort);
-			udpSocket.send(udpSendPacket);	//·¢ËÍudpÊı¾İ°ü
-			Log.i(TAG, "³É¹¦ÏòIPÎª" + sendto.getHostAddress() + "·¢ËÍUDPÊı¾İ£º" + sendStr);
+			udpSocket.send(udpSendPacket);	//å‘é€udpæ•°æ®åŒ…
+			Log.i(TAG, "æˆåŠŸå‘IPä¸º" + sendto.getHostAddress() + "å‘é€UDPæ•°æ®ï¼š" + sendStr);
 			udpSendPacket = null;
 			
 		} catch (UnsupportedEncodingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			Log.e(TAG, "sendUdpData(String sendStr, int port)....ÏµÍ³²»Ö§³ÖGBK±àÂë");
-		} catch (IOException e) {	//·¢ËÍUDPÊı¾İ°ü³ö´í
+			Log.e(TAG, "sendUdpData(String sendStr, int port)....ç³»ç»Ÿä¸æ”¯æŒGBKç¼–ç ");
+		} catch (IOException e) {	//å‘é€UDPæ•°æ®åŒ…å‡ºé”™
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			udpSendPacket = null;
-			Log.e(TAG, "sendUdpData(String sendStr, int port)....·¢ËÍUDPÊı¾İ°üÊ§°Ü");
+			Log.e(TAG, "sendUdpData(String sendStr, int port)....å‘é€UDPæ•°æ®åŒ…å¤±è´¥");
 		}
 	}
 	
-	private synchronized void addUser(IpMessageProtocol ipmsgPro){ //Ìí¼ÓÓÃ»§µ½UsersµÄMapÖĞ
+	private synchronized void addUser(IpMessageProtocol ipmsgPro){ //æ·»åŠ ç”¨æˆ·åˆ°Usersçš„Mapä¸­
 		String userIp = udpResPacket.getAddress().getHostAddress();
 		User user = new User();
-		user.setAlias(ipmsgPro.getSenderName());	//±ğÃûÔİ¶¨·¢ËÍÕßÃû³Æ
+		user.setAlias(ipmsgPro.getSenderName());	//åˆ«åæš‚å®šå‘é€è€…åç§°
 		
 		String extraInfo = ipmsgPro.getAdditionalSection();
-		String[] userInfo = extraInfo.split("\0");	//¶Ô¸½¼ÓĞÅÏ¢½øĞĞ·Ö¸î,µÃµ½ÓÃ»§ÃûºÍ·Ö×éÃû
+		String[] userInfo = extraInfo.split("\0");	//å¯¹é™„åŠ ä¿¡æ¯è¿›è¡Œåˆ†å‰²,å¾—åˆ°ç”¨æˆ·åå’Œåˆ†ç»„å
 		if(userInfo.length < 1){
 			user.setUserName(ipmsgPro.getSenderName());
 			if(userIp.equals(InitActivity.hostIp))
-				user.setGroupName("×Ô¼º");
+				user.setGroupName("è‡ªå·±");
 			else
-				user.setGroupName("¶Ô·½Î´·Ö×éºÃÓÑ");
+				user.setGroupName("æœªåˆ†ç»„å¥½å‹");
 		}else if (userInfo.length == 1){
 			user.setUserName(userInfo[0]);
 			if(userIp.equals(InitActivity.hostIp))
-				user.setGroupName("×Ô¼º");
+				user.setGroupName("è‡ªå·±");
 			else
-				user.setGroupName("¶Ô·½Î´·Ö×éºÃÓÑ");
+				user.setGroupName("æœªåˆ†ç»„å¥½å‹");
 		}else{
 			user.setUserName(userInfo[0]);
 			if(userIp.equals(InitActivity.hostIp))
-				user.setGroupName("×Ô¼º");
+				user.setGroupName("è‡ªå·±");
 			else
 				user.setGroupName(userInfo[1]);
 		}
 		
 		user.setIp(userIp);
 		user.setHostName(ipmsgPro.getSenderHost());
-		user.setMac("");	//ÔİÊ±Ã»ÓÃÕâ¸ö×Ö¶Î
+		user.setMac("");	//æš‚æ—¶æ²¡ç”¨è¿™ä¸ªå­—æ®µ
 		users.put(userIp, user);
-		Log.i(TAG, "³É¹¦Ìí¼ÓipÎª" + userIp + "µÄÓÃ»§");
+		Log.i(TAG, "æˆåŠŸæ·»åŠ ipä¸º" + userIp + "çš„ç”¨æˆ·");
 	}
 	
 }

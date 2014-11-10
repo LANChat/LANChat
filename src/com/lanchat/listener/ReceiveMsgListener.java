@@ -3,7 +3,7 @@ package com.lanchat.listener;
 import com.lanchat.data.*;
 
 /**
- * 接收消息监听的listener接口
+ * 鎺ユ敹娑堟伅鐩戝惉鐨刲istener鎺ュ彛
  *
  */
 public interface ReceiveMsgListener {

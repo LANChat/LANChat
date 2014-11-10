@@ -39,9 +39,9 @@ public abstract class BasicActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		netThreadHelper = NetThreadHelper.newInstance();
-		// ½¨Á¢notification
+		// å»ºç«‹notification
 		mNotManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-		mNotification = new Notification(android.R.drawable.stat_sys_download,"½ÓÊÕÎÄ¼ş", System.currentTimeMillis());
+		mNotification = new Notification(android.R.drawable.stat_sys_download,"æ¥æ”¶æ–‡ä»¶", System.currentTimeMillis());
 		mNotification.contentView = new RemoteViews(getPackageName(),R.layout.file_download_notification);
 		mNotification.contentView.setProgressBar(R.id.pd_download, 100, 0,false);
 		Intent notificationIntent = new Intent(this, BasicActivity.class);
@@ -114,27 +114,27 @@ public abstract class BasicActivity extends Activity {
 			switch (msg.what) {
 			case IpMessageConst.IPMSG_SENDMSG
 					| IpMessageConst.IPMSG_FILEATTACHOPT: {
-				// ÊÕµ½·¢ËÍÎÄ¼şÇëÇó
-				final String[] extraMsg = (String[]) msg.obj; // µÃµ½¸½¼ÓÎÄ¼şĞÅÏ¢,×Ö·û´®Êı×é£¬·Ö±ğ·ÅÁË
-																// IP£¬¸½¼ÓÎÄ¼şĞÅÏ¢,·¢ËÍÕßÃû³Æ£¬°üID
+				// æ”¶åˆ°å‘é€æ–‡ä»¶è¯·æ±‚
+				final String[] extraMsg = (String[]) msg.obj; // å¾—åˆ°é™„åŠ æ–‡ä»¶ä¿¡æ¯,å­—ç¬¦ä¸²æ•°ç»„ï¼Œåˆ†åˆ«æ”¾äº†
+																// IPï¼Œé™„åŠ æ–‡ä»¶ä¿¡æ¯,å‘é€è€…åç§°ï¼ŒåŒ…ID
 				Log.d("receive file....", "receive file from :" + extraMsg[2]
 						+ "(" + extraMsg[0] + ")");
 				Log.d("receive file....", "receive file info:" + extraMsg[1]);
-				byte[] bt = { 0x07 }; // ÓÃÓÚ·Ö¸ô¶à¸ö·¢ËÍÎÄ¼şµÄ×Ö·û
+				byte[] bt = { 0x07 }; // ç”¨äºåˆ†éš”å¤šä¸ªå‘é€æ–‡ä»¶çš„å­—ç¬¦
 				String splitStr = new String(bt);
-				final String[] fileInfos = extraMsg[1].split(splitStr); // Ê¹ÓÃ·Ö¸ô×Ö·û½øĞĞ·Ö¸î
+				final String[] fileInfos = extraMsg[1].split(splitStr); // ä½¿ç”¨åˆ†éš”å­—ç¬¦è¿›è¡Œåˆ†å‰²
 
-				Log.d("feige", "ÊÕµ½ÎÄ¼ş´«ÊäÇëÇó,¹²ÓĞ" + fileInfos.length + "¸öÎÄ¼ş");
+				Log.d("feige", "æ”¶åˆ°æ–‡ä»¶ä¼ è¾“è¯·æ±‚,å…±æœ‰" + fileInfos.length + "ä¸ªæ–‡ä»¶");
 
-				String infoStr = "·¢ËÍÕßIP:\t" + extraMsg[0] + "\n" + "·¢ËÍÕßÃû³Æ:\t"
-						+ extraMsg[2] + "\n" + "ÎÄ¼ş×ÜÊı:\t" + fileInfos.length
-						+ "¸ö";
+				String infoStr = "å‘é€è€…IP:\t" + extraMsg[0] + "\n" + "å‘é€è€…åç§°:\t"
+						+ extraMsg[2] + "\n" + "æ–‡ä»¶æ€»æ•°:\t" + fileInfos.length
+						+ "ä¸ª";
 
 				new AlertDialog.Builder(queue.getLast())
 						.setIcon(android.R.drawable.ic_dialog_info)
-						.setTitle("ÊÕµ½ÎÄ¼ş´«ÊäÇëÇó")
+						.setTitle("æ”¶åˆ°æ–‡ä»¶ä¼ è¾“è¯·æ±‚")
 						.setMessage(infoStr)
-						.setPositiveButton("½ÓÊÕ",
+						.setPositiveButton("æ¥æ”¶",
 								new DialogInterface.OnClickListener() {
 
 									@Override
@@ -144,30 +144,30 @@ public abstract class BasicActivity extends Activity {
 										Thread fileReceiveThread = new Thread(
 												new NetTcpFileReceiveThread(
 														extraMsg[3],
-														extraMsg[0], fileInfos)); // ĞÂ½¨Ò»¸ö½ÓÊÜÎÄ¼şÏß³Ì
-										fileReceiveThread.start(); // Æô¶¯Ïß³Ì
+														extraMsg[0], fileInfos)); // æ–°å»ºä¸€ä¸ªæ¥å—æ–‡ä»¶çº¿ç¨‹
+										fileReceiveThread.start(); // å¯åŠ¨çº¿ç¨‹
 										Toast.makeText(getCurrentActivity(),
-												"¿ªÊ¼½ÓÊÕÎÄ¼ş", Toast.LENGTH_SHORT)
+												"å¼€å§‹æ¥æ”¶æ–‡ä»¶", Toast.LENGTH_SHORT)
 												.show();
-										queue.getLast().showNotification(); // ÏÔÊ¾notification
+										queue.getLast().showNotification(); // æ˜¾ç¤ºnotification
 									}
 								})
-						.setNegativeButton("È¡Ïû",
+						.setNegativeButton("å–æ¶ˆ",
 								new DialogInterface.OnClickListener() {
 									public void onClick(DialogInterface dialog,
 											int which) {
-										// ·¢ËÍ¾Ü¾ø±¨ÎÄ
-										// ¹¹Ôì¾Ü¾ø±¨ÎÄ
+										// å‘é€æ‹’ç»æŠ¥æ–‡
+										// æ„é€ æ‹’ç»æŠ¥æ–‡
 										IpMessageProtocol ipmsgSend = new IpMessageProtocol();
 										ipmsgSend.setVersion(""
-												+ IpMessageConst.VERSION); // ¾Ü¾øÃüÁî×Ö
+												+ IpMessageConst.VERSION); // æ‹’ç»å‘½ä»¤å­—
 										ipmsgSend
 												.setCommandNo(IpMessageConst.IPMSG_RELEASEFILES);
-										ipmsgSend.setSenderName("android·É¸ë");
-										ipmsgSend.setSenderHost("android");
+										ipmsgSend.setSenderName("LANChat");
+										ipmsgSend.setSenderHost("Android");
 										ipmsgSend
 												.setAdditionalSection(extraMsg[3]
-														+ "\0"); // ¸½¼ÓĞÅÏ¢ÀïÊÇÈ·ÈÏÊÕµ½µÄ°üµÄ±àºÅ
+														+ "\0"); // é™„åŠ ä¿¡æ¯é‡Œæ˜¯ç¡®è®¤æ”¶åˆ°çš„åŒ…çš„ç¼–å·
 
 										InetAddress sendAddress = null;
 										try {
@@ -188,28 +188,28 @@ public abstract class BasicActivity extends Activity {
 			}
 				break;
 
-			case UsedConst.FILERECEIVEINFO: { // ¸üĞÂ½ÓÊÕÎÄ¼ş½ø¶ÈÌõ
-				int[] sendedPer = (int[]) msg.obj; // µÃµ½ĞÅÏ¢
+			case UsedConst.FILERECEIVEINFO: { // æ›´æ–°æ¥æ”¶æ–‡ä»¶è¿›åº¦æ¡
+				int[] sendedPer = (int[]) msg.obj; // å¾—åˆ°ä¿¡æ¯
 				queue.getLast().mNotification.contentView.setProgressBar(
 						R.id.pd_download, 100, sendedPer[1], false);
 				queue.getLast().mNotification.contentView.setTextViewText(
-						R.id.fileRec_info, "ÎÄ¼ş" + (sendedPer[0] + 1) + "½ÓÊÕÖĞ:"
+						R.id.fileRec_info, "æ–‡ä»¶" + (sendedPer[0] + 1) + "æ¥æ”¶ä¸­:"
 								+ sendedPer[1] + "%");
 
-				queue.getLast().showNotification(); // ÏÔÊ¾notification
+				queue.getLast().showNotification(); // æ˜¾ç¤ºnotification
 			}
 				break;
 
-			case UsedConst.FILERECEIVESUCCESS: { // ÎÄ¼ş½ÓÊÕ³É¹¦
+			case UsedConst.FILERECEIVESUCCESS: { // æ–‡ä»¶æ¥æ”¶æˆåŠŸ
 				int[] successNum = (int[]) msg.obj;
 
 				queue.getLast().mNotification.contentView.setTextViewText(
-						R.id.fileRec_info, "µÚ" + successNum[0] + "¸öÎÄ¼ş½ÓÊÕ³É¹¦");
-				queue.getLast().makeTextShort("µÚ" + successNum[0] + "¸öÎÄ¼ş½ÓÊÕ³É¹¦");
+						R.id.fileRec_info, "ç¬¬" + successNum[0] + "ä¸ªæ–‡ä»¶æ¥æ”¶æˆåŠŸ");
+				queue.getLast().makeTextShort("ç¬¬" + successNum[0] + "ä¸ªæ–‡ä»¶æ¥æ”¶æˆåŠŸ");
 				if (successNum[0] == successNum[1]) {
 					queue.getLast().mNotification.contentView.setTextViewText(
-							R.id.fileRec_info, "ËùÓĞÎÄ¼ş½ÓÊÕ³É¹¦");
-					queue.getLast().makeTextShort("ËùÓĞÎÄ¼ş½ÓÊÕ³É¹¦");
+							R.id.fileRec_info, "æ‰€æœ‰æ–‡ä»¶æ¥æ”¶æˆåŠŸ");
+					queue.getLast().makeTextShort("æ‰€æœ‰æ–‡ä»¶æ¥æ”¶æˆåŠŸ");
 				}
 				queue.getLast().showNotification();
 			}

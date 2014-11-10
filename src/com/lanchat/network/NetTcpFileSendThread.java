@@ -14,13 +14,13 @@ import android.util.Log;
 import com.lanchat.activity.*;
 import com.lanchat.util.*;
 /**
- * Tcp·¢ËÍÎÄ¼şÏß³Ì
+ * Tcpå‘é€æ–‡ä»¶çº¿ç¨‹
  * 
  * 2014/10/21
  */
 public class NetTcpFileSendThread implements Runnable{
 	private final static String TAG = "NetTcpFileSendThread";
-	private String[] filePathArray;	//±£´æ·¢ËÍÎÄ¼şÂ·¾¶µÄÊı×é
+	private String[] filePathArray;	//ä¿å­˜å‘é€æ–‡ä»¶è·¯å¾„çš„æ•°ç»„
 	
 	public static ServerSocket server;	
 	private Socket socket;	
@@ -34,7 +34,7 @@ public class NetTcpFileSendThread implements Runnable{
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			Log.e(TAG, "¼àÌıtcp¶Ë¿ÚÊ§°Ü");
+			Log.e(TAG, "ç›‘å¬tcpç«¯å£å¤±è´¥");
 		}
 	}
 	
@@ -45,24 +45,22 @@ public class NetTcpFileSendThread implements Runnable{
 		for(int i = 0; i < filePathArray.length; i ++){
 			try {
 				socket = server.accept();
-				Log.i(TAG, "ÓëIPÎª" + socket.getInetAddress().getHostAddress() + "µÄÓÃ»§½¨Á¢TCPÁ¬½Ó");
+				Log.i(TAG, "ä¸IPä¸º" + socket.getInetAddress().getHostAddress() + "çš„ç”¨æˆ·å»ºç«‹TCPè¿æ¥");
 				BufferedOutputStream bos = new BufferedOutputStream(socket.getOutputStream());
 				BufferedInputStream bis = new BufferedInputStream(socket.getInputStream());
-//				DataInputStream dis = new DataInputStream(bis);
-//				String ipmsgStr = dis.readUTF();
 				int mlen = bis.read(readBuffer);
 				String ipmsgStr = new String(readBuffer,0,mlen,"gbk");
 				
 				
-				Log.d(TAG, "ÊÕµ½µÄTCPÊı¾İĞÅÏ¢ÄÚÈİÊÇ£º" + ipmsgStr);
+				Log.d(TAG, "æ”¶åˆ°çš„TCPæ•°æ®ä¿¡æ¯å†…å®¹æ˜¯ï¼š" + ipmsgStr);
 				
 				IpMessageProtocol ipmsgPro = new IpMessageProtocol(ipmsgStr);
 				String fileNoStr = ipmsgPro.getAdditionalSection();
 				String[] fileNoArray = fileNoStr.split(":");
 				int sendFileNo = Integer.valueOf(fileNoArray[1]);
 				
-				Log.d(TAG, "±¾´Î·¢ËÍµÄÎÄ¼ş¾ßÌåÂ·¾¶Îª" + filePathArray[sendFileNo]);
-				File sendFile = new File(filePathArray[sendFileNo]);	//Òª·¢ËÍµÄÎÄ¼ş
+				Log.d(TAG, "æœ¬æ¬¡å‘é€çš„æ–‡ä»¶å…·ä½“è·¯å¾„ä¸º" + filePathArray[sendFileNo]);
+				File sendFile = new File(filePathArray[sendFileNo]);	//è¦å‘é€çš„æ–‡ä»¶
 				BufferedInputStream fbis = new BufferedInputStream(new FileInputStream(sendFile));
 				
 				int rlen = 0;
@@ -70,7 +68,7 @@ public class NetTcpFileSendThread implements Runnable{
 					bos.write(readBuffer, 0, rlen);
 				}
 				bos.flush();
-				Log.i(TAG, "ÎÄ¼ş·¢ËÍ³É¹¦");
+				Log.i(TAG, "æ–‡ä»¶å‘é€æˆåŠŸ");
 				
 				if(bis != null){
 					bis.close();
@@ -88,17 +86,17 @@ public class NetTcpFileSendThread implements Runnable{
 				}
 				
 				if(i == (filePathArray.length -1)){
-					BasicActivity.sendEmptyMessage(UsedConst.FILESENDSUCCESS);	//ÎÄ¼ş·¢ËÍ³É¹¦
+					BasicActivity.sendEmptyMessage(UsedConst.FILESENDSUCCESS);	//æ–‡ä»¶å‘é€æˆåŠŸ
 				}
 				
 			}catch (UnsupportedEncodingException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-				Log.e(TAG, "½ÓÊÕÊı¾İÊ±£¬ÏµÍ³²»Ö§³ÖGBK±àÂë");
+				Log.e(TAG, "æ¥æ”¶æ•°æ®æ—¶ï¼Œç³»ç»Ÿä¸æ”¯æŒGBKç¼–ç ");
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-				Log.e(TAG, "·¢ÉúIO´íÎó");
+				Log.e(TAG, "å‘ç”ŸIOé”™è¯¯");
 				break;
 			} finally{
 				if(socket != null){

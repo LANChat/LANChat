@@ -28,13 +28,13 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 /**
- * ÁÄÌìactivityÖĞµÄListViewµÄadapter£¬ÊµÏÖ·¢ËÍÕßÃû³Æ¶ÔÓ¦TextView×ÖÌåµÄÑÕÉ«±ä»¯
+ * èŠå¤©activityä¸­çš„ListViewçš„adapterï¼Œå®ç°å‘é€è€…åç§°å¯¹åº”TextViewå­—ä½“çš„é¢œè‰²å˜åŒ–
  * 
  * 2014/10/19
  *
  */
 /*
- *Õû¸öÊÇÈ¥ÊµÏÖ¶Ô»°¿òµÄÄÚÈİ 
+ *æ•´ä¸ªæ˜¯å»å®ç°å¯¹è¯æ¡†çš„å†…å®¹ 
  **/
 public class ChatListAdapter extends BaseAdapter {
 	protected LayoutInflater mInflater;
@@ -86,22 +86,15 @@ public class ChatListAdapter extends BaseAdapter {
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		// TODO Auto-generated method stub	
-		Log.i("TAG", "llllllllllllll");
-		
 		ChatMessage msg = msgList.get(position);
-		
 		final ViewHolder holder;
 		if(convertView == null){
 			convertView= mInflater.inflate(R.layout.team_layout_main_singlechat_item, null);
-			
 			holder=new ViewHolder(convertView);
 			convertView.setTag(holder);
 		}else{
 			holder=(ViewHolder) convertView.getTag();
 		}
-	
-		Log.i("TAG", "jjjjjjjjjjjjjjjjjjjjj");
-	
 			holder.setData(msg);
 	
     	return convertView;
@@ -123,8 +116,8 @@ private class ViewHolder{
 	
 		RelativeLayout.LayoutParams rl_chat_left=((RelativeLayout.LayoutParams)lchat_layout.getLayoutParams());
 		RelativeLayout.LayoutParams rl_tv_msg_left=((RelativeLayout.LayoutParams)text.getLayoutParams());
-		if(msg.isSelfMsg()){	//¸ù¾İ±¾µØµÄipµØÖ·À´ÅĞ¶Ï¸ÃÌõĞÅÏ¢ÊÇÊôÓÚ±¾ÈËËùËµ»¹ÊÇ¶Ô·½ËùËµ
-																			//Èç¹ûÊÇ×Ô¼ºËµµÄ£¬ÔòÏÔÊ¾ÔÚÓÒ±ß£»Èç¹ûÊÇ¶Ô·½ËùËµ£¬ÔòÏÔÊ¾ÔÚ×ó±ß£¬ÔÚÕâÀïÒ²¿ÉÒÔÀûÓÃIPµØÖ·À´ÅĞ¶Ï
+		if(msg.isSelfMsg()){	//æ ¹æ®æœ¬åœ°çš„ipåœ°å€æ¥åˆ¤æ–­è¯¥æ¡ä¿¡æ¯æ˜¯å±äºæœ¬äººæ‰€è¯´è¿˜æ˜¯å¯¹æ–¹æ‰€è¯´
+																			//å¦‚æœæ˜¯è‡ªå·±è¯´çš„ï¼Œåˆ™æ˜¾ç¤ºåœ¨å³è¾¹ï¼›å¦‚æœæ˜¯å¯¹æ–¹æ‰€è¯´ï¼Œåˆ™æ˜¾ç¤ºåœ¨å·¦è¾¹ï¼Œåœ¨è¿™é‡Œä¹Ÿå¯ä»¥åˆ©ç”¨IPåœ°å€æ¥åˆ¤æ–­
 			rl_chat_left.addRule(RelativeLayout.ALIGN_PARENT_LEFT,-1);
 			rl_chat_left.addRule(RelativeLayout.ALIGN_PARENT_RIGHT,0);
 	
@@ -137,15 +130,10 @@ private class ViewHolder{
 			rl_tv_msg_left.addRule(RelativeLayout.RIGHT_OF,0);
 			text.setBackgroundResource(R.drawable.balloon_r_selector);
 		}
-		/**********È¥µôÍ·Ïñ**************/
-	//	image.setImageResource(R.drawable.portrait_0);		//ÉèÖÃÍ·Ïñ
-		String str = msg.getMsg();														//ÏûÏ¢¾ßÌåÄÚÈİ ¼´»ñÈ¡ÏàÓ¦Î»ÖÃµÄĞÅÏ¢
-		String zhengze = "f0[0-9]{2}|f10[0-7]";		//ÕıÔò±í´ïÊ½£¬ÓÃÀ´ÅĞ¶ÏÏûÏ¢ÄÚÊÇ·ñÓĞ±íÇé
-	
+		String str = msg.getMsg();														//æ¶ˆæ¯å…·ä½“å†…å®¹ å³è·å–ç›¸åº”ä½ç½®çš„ä¿¡æ¯
+		String zhengze = "f0[0-9]{2}|f10[0-7]";		//æ­£åˆ™è¡¨è¾¾å¼ï¼Œç”¨æ¥åˆ¤æ–­æ¶ˆæ¯å†…æ˜¯å¦æœ‰è¡¨æƒ…
 		try {
-
-	
-			SpannableString spannableString = ExpressionUtil.getExpressionString(context, str, zhengze);//¿ÉÒÔÓÃÀ´ÏÔÊ¾Í¼Æ¬»òÕßÆäËü¹¦ÄÜ
+			SpannableString spannableString = ExpressionUtil.getExpressionString(context, str, zhengze);//å¯ä»¥ç”¨æ¥æ˜¾ç¤ºå›¾ç‰‡æˆ–è€…å…¶å®ƒåŠŸèƒ½
 			text.setText(spannableString);
 	
 		} catch (NumberFormatException e) {

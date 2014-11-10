@@ -20,10 +20,6 @@ import com.lanchat.util.IpMessageConst;
 import com.lanchat.util.IpMessageProtocol;
 import com.lanchat.util.UsedConst;
 
-
-
-
-
 import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -39,6 +35,7 @@ import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.AdapterView;
@@ -51,46 +48,37 @@ import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
 
-public class ChatActivity extends BasicActivity implements OnClickListener,ReceiveMsgListener{
-	private TextView chat_name;			//Ãû×Ö¼°IP
-	private TextView chat_mood;			//×éÃû
-	
-	private Button chat_quit;			//ÍË³ö°´Å¥
-
-	
-	private ListView chat_list;			//ÁÄÌìÁĞ±í
-	
-	
-	private EditText chat_input;		//ÁÄÌìÊäÈë¿ò
-	private Button chat_send;			//·¢ËÍ°´Å¥
-	/* ±íÇéÑ¡Ôñ°´Å¥
-	 *jc
+public class ChatActivity extends BasicActivity implements OnClickListener,
+		ReceiveMsgListener {
+	private TextView chat_name; // åå­—åŠIP
+	private TextView chat_mood; // ç»„å
+	private ListView chat_list; // èŠå¤©åˆ—è¡¨
+	private EditText chat_input; // èŠå¤©è¾“å…¥æ¡†
+	private Button chat_send; // å‘é€æŒ‰é’®
+	/*
+	 * è¡¨æƒ…é€‰æ‹©æŒ‰é’®
 	 */
 	private ImageView chat_face;
-	private ChatListAdapter adapter;	//ListView¶ÔÓ¦µÄadapter
+	private ChatListAdapter adapter; // ListViewå¯¹åº”çš„adapter
 	private int[] imageIds = new int[107];
-	private Dialog builder; //¿ØÖÆ±íÇé¿òµÄ¾ä±ú
-	
-	
-	private ArrayList<ChatMessage> msgList;	//ÏûÏ¢list
-	
-	
-	
-	
-	private String receiverName;			//Òª½ÓÊÕ±¾activityËù·¢ËÍµÄÏûÏ¢µÄÓÃ»§Ãû×Ö
-	private String receiverIp;			//Òª½ÓÊÕ±¾activityËù·¢ËÍµÄÏûÏ¢µÄÓÃ»§IP
-	private String receiverGroup;			//Òª½ÓÊÕ±¾activityËù·¢ËÍµÄÏûÏ¢µÄÓÃ»§×éÃû
+	private Dialog builder; // æ§åˆ¶è¡¨æƒ…æ¡†çš„å¥æŸ„
 
+	private ArrayList<ChatMessage> msgList; // æ¶ˆæ¯list
+
+	private String receiverName; // è¦æ¥æ”¶æœ¬activityæ‰€å‘é€çš„æ¶ˆæ¯çš„ç”¨æˆ·åå­—
+	private String receiverIp; // è¦æ¥æ”¶æœ¬activityæ‰€å‘é€çš„æ¶ˆæ¯çš„ç”¨æˆ·IP
+	private String receiverGroup; // è¦æ¥æ”¶æœ¬activityæ‰€å‘é€çš„æ¶ˆæ¯çš„ç”¨æˆ·ç»„å
 	private String selfName;
 	private String selfGroup;
-	
-	private final static int MENU_ITEM_SENDFILE = Menu.FIRST;	//·¢ËÍÎÄ¼ş
+
+	private final static int MENU_ITEM_SENDFILE = Menu.FIRST; // å‘é€æ–‡ä»¶
 	private final static int MENU_ITEM_EXIT = Menu.FIRST + 1;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
+		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.chat);
 		findViews();
 		msgList = new ArrayList<ChatMessage>();
@@ -99,50 +87,49 @@ public class ChatActivity extends BasicActivity implements OnClickListener,Recei
 		receiverName = bundle.getString("receiverName");
 		receiverIp = bundle.getString("receiverIp");
 		receiverGroup = bundle.getString("receiverGroup");
-		selfName = "android·É¸ë";
-		selfGroup = "android";
-		
+		selfName = "Android";
+		selfGroup = "Android";
+
 		chat_name.setText(receiverName + "(" + receiverIp + ")");
-		chat_mood.setText("×éÃû£º" + receiverGroup);
-		chat_quit.setOnClickListener(this);
+		chat_mood.setText("ç»„åï¼š" + receiverGroup);
 		chat_send.setOnClickListener(this);
 		chat_face.setOnClickListener(this);
-		Iterator<ChatMessage> it = netThreadHelper.getReceiveMsgQueue().iterator();
-		while(it.hasNext()){	//Ñ­»·ÏûÏ¢¶ÓÁĞ£¬»ñÈ¡¶ÓÁĞÖĞÓë±¾ÁÄÌìactivityÏà¹ØĞÅÏ¢
+		Iterator<ChatMessage> it = netThreadHelper.getReceiveMsgQueue()
+				.iterator();
+		while (it.hasNext()) { // å¾ªç¯æ¶ˆæ¯é˜Ÿåˆ—ï¼Œè·å–é˜Ÿåˆ—ä¸­ä¸æœ¬èŠå¤©activityç›¸å…³ä¿¡æ¯
 			ChatMessage temp = it.next();
-			//ÈôÏûÏ¢¶ÓÁĞÖĞµÄ·¢ËÍÕßÓë±¾activityµÄÏûÏ¢½ÓÊÕÕßIPÏàÍ¬£¬Ôò½«Õâ¸öÏûÏ¢ÄÃ³ö£¬Ìí¼Óµ½±¾activityÒªÏÔÊ¾µÄÏûÏ¢listÖĞ
-			if(receiverIp.equals(temp.getSenderIp())){ 
-				msgList.add(temp);	//Ìí¼Óµ½ÏÔÊ¾list
-				it.remove();		//½«±¾ÏûÏ¢´ÓÏûÏ¢¶ÓÁĞÖĞÒÆ³ı
+			// è‹¥æ¶ˆæ¯é˜Ÿåˆ—ä¸­çš„å‘é€è€…ä¸æœ¬activityçš„æ¶ˆæ¯æ¥æ”¶è€…IPç›¸åŒï¼Œåˆ™å°†è¿™ä¸ªæ¶ˆæ¯æ‹¿å‡ºï¼Œæ·»åŠ åˆ°æœ¬activityè¦æ˜¾ç¤ºçš„æ¶ˆæ¯listä¸­
+			if (receiverIp.equals(temp.getSenderIp())) {
+				msgList.add(temp); // æ·»åŠ åˆ°æ˜¾ç¤ºlist
+				it.remove(); // å°†æœ¬æ¶ˆæ¯ä»æ¶ˆæ¯é˜Ÿåˆ—ä¸­ç§»é™¤
 			}
 		}
-		
-		adapter = new ChatListAdapter(this,msgList);
+
+		adapter = new ChatListAdapter(this, msgList);
 		chat_list.setAdapter(adapter);
-		
-		netThreadHelper.addReceiveMsgListener(this);	//×¢²áµ½listeners
+		netThreadHelper.addReceiveMsgListener(this); // æ³¨å†Œåˆ°listeners
 	}
-	
-	private void findViews(){
+
+	private void findViews() {
 		chat_name = (TextView) findViewById(R.id.chat_name);
 		chat_mood = (TextView) findViewById(R.id.chat_mood);
-		chat_quit = (Button) findViewById(R.id.chat_quit);
+		// chat_quit = (Button) findViewById(R.id.chat_quit);
 		chat_list = (ListView) findViewById(R.id.chat_list);
 		chat_input = (EditText) findViewById(R.id.chat_input);
 		chat_send = (Button) findViewById(R.id.chat_send);
-		chat_face=(ImageView)findViewById(R.id.chat_face);//±íÇéÀ©ÕÅ¼ü
+		chat_face = (ImageView) findViewById(R.id.chat_face);// è¡¨æƒ…æ‰©å¼ é”®
 	}
 
 	@Override
 	public void processMessage(Message msg) {
 		// TODO Auto-generated method stub
-		switch(msg.what){
+		switch (msg.what) {
 		case IpMessageConst.IPMSG_SENDMSG:
-			adapter.notifyDataSetChanged();	//Ë¢ĞÂListView
+			adapter.notifyDataSetChanged(); // åˆ·æ–°ListView
 			break;
-			
-		case IpMessageConst.IPMSG_RELEASEFILES:{ //¾Ü¾ø½ÓÊÜÎÄ¼ş,Í£Ö¹·¢ËÍÎÄ¼şÏß³Ì
-			if(NetTcpFileSendThread.server != null){
+
+		case IpMessageConst.IPMSG_RELEASEFILES: { // æ‹’ç»æ¥å—æ–‡ä»¶,åœæ­¢å‘é€æ–‡ä»¶çº¿ç¨‹
+			if (NetTcpFileSendThread.server != null) {
 				try {
 					NetTcpFileSendThread.server.close();
 				} catch (IOException e) {
@@ -152,30 +139,29 @@ public class ChatActivity extends BasicActivity implements OnClickListener,Recei
 			}
 		}
 			break;
-			
-		case UsedConst.FILESENDSUCCESS:{	//ÎÄ¼ş·¢ËÍ³É¹¦
-			makeTextShort("ÎÄ¼ş·¢ËÍ³É¹¦");
+
+		case UsedConst.FILESENDSUCCESS: { // æ–‡ä»¶å‘é€æˆåŠŸ
+			makeTextShort("æ–‡ä»¶å‘é€æˆåŠŸ");
 		}
-			break;	
-		}	//end of switch
+			break;
+		} // end of switch
 	}
 
 	@Override
 	public boolean receive(ChatMessage msg) {
 		// TODO Auto-generated method stub
-		if(receiverIp.equals(msg.getSenderIp())){	//ÈôÏûÏ¢Óë±¾activityÓĞ¹Ø£¬Ôò½ÓÊÕ
-			msgList.add(msg);	//½«´ËÏûÏ¢Ìí¼Óµ½ÏÔÊ¾listÖĞ
-			sendEmptyMessage(IpMessageConst.IPMSG_SENDMSG); //Ê¹ÓÃhandleÍ¨Öª£¬À´¸üĞÂUI
+		if (receiverIp.equals(msg.getSenderIp())) { // è‹¥æ¶ˆæ¯ä¸æœ¬activityæœ‰å…³ï¼Œåˆ™æ¥æ”¶
+			msgList.add(msg); // å°†æ­¤æ¶ˆæ¯æ·»åŠ åˆ°æ˜¾ç¤ºlistä¸­
+			sendEmptyMessage(IpMessageConst.IPMSG_SENDMSG); // ä½¿ç”¨handleé€šçŸ¥ï¼Œæ¥æ›´æ–°UI
 			BasicActivity.playMsg();
 			return true;
-		}	
+		}
 		return false;
 	}
 
 	@Override
 	public void finish() {
 		// TODO Auto-generated method stub
-		//Ò»¶¨ÒªÒÆ³ı£¬²»È»ĞÅÏ¢½ÓÊÕ»á³öÏÖÎÊÌâ
 		netThreadHelper.removeReceiveMsgListener(this);
 		super.finish();
 	}
@@ -183,31 +169,26 @@ public class ChatActivity extends BasicActivity implements OnClickListener,Recei
 	@Override
 	public void onClick(View v) {
 		// TODO Auto-generated method stub
-		if(v == chat_send){
-			sendAndAddMessage();	
-		}else if(v == chat_quit){
-			finish();
-		}
-		else if(v == chat_face)
-		{
-			/*³öÏÖ±íÇéÈ¦Ñ¡Ôñ
-			 jc 
+		if (v == chat_send) {
+			sendAndAddMessage();
+		} else if (v == chat_face) {
+			/*
+			 * å‡ºç°è¡¨æƒ…åœˆé€‰æ‹© jc
 			 */
-	
+
 			createExpressionDialog();
-			
-			
+
 		}
-		
+
 	}
-	
+
 	/**
-	 * ·¢ËÍÏûÏ¢²¢½«¸ÃÏûÏ¢Ìí¼Óµ½UIÏÔÊ¾
+	 * å‘é€æ¶ˆæ¯å¹¶å°†è¯¥æ¶ˆæ¯æ·»åŠ åˆ°UIæ˜¾ç¤º
 	 */
-	private void sendAndAddMessage(){
+	private void sendAndAddMessage() {
 		String msgStr = chat_input.getText().toString();
-		if(!"".equals(msgStr)){
-			//·¢ËÍÏûÏ¢
+		if (!"".equals(msgStr)) {
+			// å‘é€æ¶ˆæ¯
 			IpMessageProtocol sendMsg = new IpMessageProtocol();
 			sendMsg.setVersion(String.valueOf(IpMessageConst.VERSION));
 			sendMsg.setSenderName(selfName);
@@ -219,53 +200,51 @@ public class ChatActivity extends BasicActivity implements OnClickListener,Recei
 				sendto = InetAddress.getByName(receiverIp);
 			} catch (UnknownHostException e) {
 				// TODO Auto-generated catch block
-				Log.e("MyFeiGeChatActivity", "·¢ËÍµØÖ·ÓĞÎó");
+				Log.e("ChatActivity", "å‘é€åœ°å€æœ‰è¯¯");
 			}
-			if(sendto != null)
-				netThreadHelper.sendUdpData(sendMsg.getProtocolString() + "\0", sendto, IpMessageConst.PORT);
-			
-			//Ìí¼ÓÏûÏ¢µ½ÏÔÊ¾list
-			ChatMessage selfMsg = new ChatMessage("localhost", selfName, msgStr, new Date());
-			selfMsg.setSelfMsg(true);	//ÉèÖÃÎª×ÔÉíÏûÏ¢
-			
+			if (sendto != null)
+				netThreadHelper.sendUdpData(sendMsg.getProtocolString() + "\0",
+						sendto, IpMessageConst.PORT);
+
+			// æ·»åŠ æ¶ˆæ¯åˆ°æ˜¾ç¤ºlist
+			ChatMessage selfMsg = new ChatMessage("localhost", selfName,
+					msgStr, new Date());
+			selfMsg.setSelfMsg(true); // è®¾ç½®ä¸ºè‡ªèº«æ¶ˆæ¯
+
 			adapter.addMessage(selfMsg);
-			
-			
-		//	adapter.notifyDataSetChanged();//¸üĞÂUI	
+
+			// adapter.notifyDataSetChanged();//æ›´æ–°UI
 			chat_input.setText("");
-		
-		}else{
-			makeTextShort("²»ÄÜ·¢ËÍ¿ÕÄÚÈİ");
+
+		} else {
+			makeTextShort("ä¸èƒ½å‘é€ç©ºå†…å®¹");
 		}
-		
-	
-	//	adapter.notifyDataSetChanged();//¸üĞÂUI
+
+		// adapter.notifyDataSetChanged();//æ›´æ–°UI
 	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// TODO Auto-generated method stub
 		super.onCreateOptionsMenu(menu);
-		menu.add(0, MENU_ITEM_SENDFILE, 0, "·¢ËÍÎÄ¼ş");
-		menu.add(0, MENU_ITEM_EXIT, 0, "ÍË³ö");
-		
+		menu.add(0, MENU_ITEM_SENDFILE, 0, "å‘é€æ–‡ä»¶");
+		menu.add(0, MENU_ITEM_EXIT, 0, "é€€å‡º");
 		return true;
 	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// TODO Auto-generated method stub
-		switch(item.getItemId()){
+		switch (item.getItemId()) {
 		case MENU_ITEM_SENDFILE:
 			Intent intent = new Intent(this, FileActivity.class);
 			startActivityForResult(intent, 0);
-			
 			break;
 		case MENU_ITEM_EXIT:
 			finish();
 			break;
 		}
-		
+
 		return super.onOptionsItemSelected(item);
 	}
 
@@ -273,108 +252,112 @@ public class ChatActivity extends BasicActivity implements OnClickListener,Recei
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		// TODO Auto-generated method stub
 		super.onActivityResult(requestCode, resultCode, data);
-		if(resultCode == RESULT_OK){
-			//µÃµ½·¢ËÍÎÄ¼şµÄÂ·¾¶
+		if (resultCode == RESULT_OK) {
+			// å¾—åˆ°å‘é€æ–‡ä»¶çš„è·¯å¾„
 			Bundle bundle = data.getExtras();
-			
-			String filePaths = bundle.getString("filePaths");	//¸½¼ÓÎÄ¼şĞÅÏ¢´®,¶à¸öÎÄ¼şÊ¹ÓÃ"\0"½øĞĞ·Ö¸ô
+			String filePaths = bundle.getString("filePaths"); // é™„åŠ æ–‡ä»¶ä¿¡æ¯ä¸²,å¤šä¸ªæ–‡ä»¶ä½¿ç”¨"\0"è¿›è¡Œåˆ†éš”
 			String[] filePathArray = filePaths.split("\0");
-			
-			//·¢ËÍ´«ËÍÎÄ¼şUDPÊı¾İ±¨
+
+			// å‘é€ä¼ é€æ–‡ä»¶UDPæ•°æ®æŠ¥
 			IpMessageProtocol sendPro = new IpMessageProtocol();
-			sendPro.setVersion("" +IpMessageConst.VERSION);
-			sendPro.setCommandNo(IpMessageConst.IPMSG_SENDMSG | IpMessageConst.IPMSG_FILEATTACHOPT);
+			sendPro.setVersion("" + IpMessageConst.VERSION);
+			sendPro.setCommandNo(IpMessageConst.IPMSG_SENDMSG
+					| IpMessageConst.IPMSG_FILEATTACHOPT);
 			sendPro.setSenderName(selfName);
 			sendPro.setSenderHost(selfGroup);
-			String msgStr = "";	//·¢ËÍµÄÏûÏ¢
-			
-			StringBuffer additionInfoSb = new StringBuffer();	//ÓÃÓÚ×éºÏ¸½¼ÓÎÄ¼ş¸ñÊ½µÄsb
-			for(String path:filePathArray){
+			String msgStr = ""; // å‘é€çš„æ¶ˆæ¯
+			StringBuffer additionInfoSb = new StringBuffer(); // ç”¨äºç»„åˆé™„åŠ æ–‡ä»¶æ ¼å¼çš„sb
+			for (String path : filePathArray) {
 				File file = new File(path);
 				additionInfoSb.append("0:");
 				additionInfoSb.append(file.getName() + ":");
-				additionInfoSb.append(Long.toHexString(file.length()) + ":");		//ÎÄ¼ş´óĞ¡Ê®Áù½øÖÆ±íÊ¾
-				additionInfoSb.append(Long.toHexString(file.lastModified()) + ":");	//ÎÄ¼ş´´½¨Ê±¼ä£¬ÏÖÔÚÔİÊ±ÒÑ×îºóĞŞ¸ÄÊ±¼äÌæ´ú
+				additionInfoSb.append(Long.toHexString(file.length()) + ":"); // æ–‡ä»¶å¤§å°åå…­è¿›åˆ¶è¡¨ç¤º
+				additionInfoSb.append(Long.toHexString(file.lastModified())
+						+ ":"); // æ–‡ä»¶åˆ›å»ºæ—¶é—´ï¼Œç°åœ¨æš‚æ—¶å·²æœ€åä¿®æ”¹æ—¶é—´æ›¿ä»£
 				additionInfoSb.append(IpMessageConst.IPMSG_FILE_REGULAR + ":");
-				byte[] bt = {0x07};		//ÓÃÓÚ·Ö¸ô¶à¸ö·¢ËÍÎÄ¼şµÄ×Ö·û
+				byte[] bt = { 0x07 }; // ç”¨äºåˆ†éš”å¤šä¸ªå‘é€æ–‡ä»¶çš„å­—ç¬¦
 				String splitStr = new String(bt);
 				additionInfoSb.append(splitStr);
 			}
-			
-			sendPro.setAdditionalSection(msgStr + "\0" + additionInfoSb.toString() + "\0");
-			
+
+			sendPro.setAdditionalSection(msgStr + "\0"
+					+ additionInfoSb.toString() + "\0");
 			InetAddress sendto = null;
 			try {
 				sendto = InetAddress.getByName(receiverIp);
 			} catch (UnknownHostException e) {
 				// TODO Auto-generated catch block
-				Log.e("MyFeiGeChatActivity", "·¢ËÍµØÖ·ÓĞÎó");
+				Log.e("ChatActivity", "å‘é€åœ°å€æœ‰è¯¯");
 			}
-			if(sendto != null)
-				netThreadHelper.sendUdpData(sendPro.getProtocolString(), sendto, IpMessageConst.PORT);
-			
-			//¼àÌı2425¶Ë¿Ú£¬×¼±¸½ÓÊÜTCPÁ¬½ÓÇëÇó
-			Thread netTcpFileSendThread = new Thread(new NetTcpFileSendThread(filePathArray));
-			netTcpFileSendThread.start();	//Æô¶¯Ïß³Ì
+			if (sendto != null)
+				netThreadHelper.sendUdpData(sendPro.getProtocolString(),
+						sendto, IpMessageConst.PORT);
+			Thread netTcpFileSendThread = new Thread(new NetTcpFileSendThread(
+					filePathArray));
+			netTcpFileSendThread.start(); // å¯åŠ¨çº¿ç¨‹
 		}
 	}
+
 	/**
-	 * ´´½¨Ò»¸ö±íÇéÑ¡Ôñ¶Ô»°¿ò
+	 * åˆ›å»ºä¸€ä¸ªè¡¨æƒ…é€‰æ‹©å¯¹è¯æ¡†
 	 */
 	private void createExpressionDialog() {
-		builder = new Dialog(ChatActivity.this);
+		builder = new Dialog(ChatActivity.this, R.style.cust_dialog);
 		GridView gridView = createGridView();
-		Log.i("TAG", "333333333333333");
 		builder.setContentView(gridView);
-		builder.setTitle("Ä¬ÈÏ±íÇé");
+		builder.setTitle("é»˜è®¤è¡¨æƒ…");
 		builder.show();
-		Log.i("TAG", "221111111111111111");
 		gridView.setOnItemClickListener(new OnItemClickListener() {
-			
+
 			@Override
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
 					long arg3) {
 				Bitmap bitmap = null;
-				bitmap = BitmapFactory.decodeResource(getResources(), imageIds[arg2 % imageIds.length]);
+				bitmap = BitmapFactory.decodeResource(getResources(),
+						imageIds[arg2 % imageIds.length]);
 				ImageSpan imageSpan = new ImageSpan(ChatActivity.this, bitmap);
 				String str = null;
-				if(arg2<10){
-					str = "f00"+arg2;
-				}else if(arg2<100){
-					str = "f0"+arg2;
-				}else{
-					str = "f"+arg2;
+				if (arg2 < 10) {
+					str = "f00" + arg2;
+				} else if (arg2 < 100) {
+					str = "f0" + arg2;
+				} else {
+					str = "f" + arg2;
 				}
 				SpannableString spannableString = new SpannableString(str);
-				spannableString.setSpan(imageSpan, 0, 4, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+				spannableString.setSpan(imageSpan, 0, 4,
+						Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 				chat_input.append(spannableString);
 				builder.dismiss();
 			}
 		});
 	}
-	
-	
+
 	/**
-	 * Éú³ÉÒ»¸ö±íÇé¶Ô»°¿òÖĞµÄgridview
+	 * ç”Ÿæˆä¸€ä¸ªè¡¨æƒ…å¯¹è¯æ¡†ä¸­çš„gridview
+	 * 
 	 * @return
 	 */
 	private GridView createGridView() {
 		final GridView view = new GridView(this);
-		List<Map<String,Object>> listItems = new ArrayList<Map<String,Object>>();
-		//Éú³É107¸ö±íÇéµÄid£¬·â×°
-		for(int i = 0; i < 107; i++){
+		List<Map<String, Object>> listItems = new ArrayList<Map<String, Object>>();
+		// ç”Ÿæˆ107ä¸ªè¡¨æƒ…çš„idï¼Œå°è£…
+		for (int i = 0; i < 107; i++) {
 			try {
-				if(i<10){
+				if (i < 10) {
 					Field field = R.drawable.class.getDeclaredField("f00" + i);
-					int resourceId = Integer.parseInt(field.get(null).toString());
+					int resourceId = Integer.parseInt(field.get(null)
+							.toString());
 					imageIds[i] = resourceId;
-				}else if(i<100){
+				} else if (i < 100) {
 					Field field = R.drawable.class.getDeclaredField("f0" + i);
-					int resourceId = Integer.parseInt(field.get(null).toString());
+					int resourceId = Integer.parseInt(field.get(null)
+							.toString());
 					imageIds[i] = resourceId;
-				}else{
+				} else {
 					Field field = R.drawable.class.getDeclaredField("f" + i);
-					int resourceId = Integer.parseInt(field.get(null).toString());
+					int resourceId = Integer.parseInt(field.get(null)
+							.toString());
 					imageIds[i] = resourceId;
 				}
 			} catch (NumberFormatException e) {
@@ -388,21 +371,23 @@ public class ChatActivity extends BasicActivity implements OnClickListener,Recei
 			} catch (IllegalAccessException e) {
 				e.printStackTrace();
 			}
-	        Map<String,Object> listItem = new HashMap<String,Object>();
+			Map<String, Object> listItem = new HashMap<String, Object>();
 			listItem.put("image", imageIds[i]);
 			listItems.add(listItem);
 		}
-		
-		SimpleAdapter simpleAdapter =new SimpleAdapter(this, listItems, R.layout.team_layout_single_expression_cell, new String[]{"image"}, new int[]{R.id.image});
+
+		SimpleAdapter simpleAdapter = new SimpleAdapter(this, listItems,
+				R.layout.team_layout_single_expression_cell,
+				new String[] { "image" }, new int[] { R.id.image });
 		view.setAdapter(simpleAdapter);
-	
-	
+
 		view.setAdapter(simpleAdapter);
 		view.setNumColumns(6);
 		view.setBackgroundColor(Color.rgb(214, 211, 214));
 		view.setHorizontalSpacing(1);
 		view.setVerticalSpacing(1);
-		view.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT,LayoutParams.WRAP_CONTENT));
+		view.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT,
+				LayoutParams.WRAP_CONTENT));
 		view.setGravity(Gravity.CENTER);
 		return view;
 	}

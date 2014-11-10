@@ -4,51 +4,44 @@ import java.util.Date;
 
 
 /**
- * IPMSGĞ­Òé³éÏóÀà
- * IPMSGĞ­Òé¸ñÊ½£º
+ * IPMSGåè®®æŠ½è±¡ç±»
+ * IPMSGåè®®æ ¼å¼ï¼š
  * Ver(1): PacketNo:SenderName:SenderHost:CommandNo:AdditionalSection
- * Ã¿²¿·Ö·Ö±ğ¶ÔÓ¦Îª£º°æ±¾ºÅ£¨ÏÖÔÚÊÇ1£©:Êı¾İ°ü±àºÅ:·¢ËÍÖ÷»ú:ÃüÁî:¸½¼ÓÊı¾İ
- * ÆäÖĞ£º
- * Êı¾İ°ü±àºÅ£¬Ò»°ãÊÇÈ¡ºÁÃëÊı¡£ÀûÓÃÕâ¸öÊı¾İ£¬¿ÉÒÔÎ¨Ò»µÄÇø±ğÃ¿¸öÊı¾İ°ü£»
- * SenderNameÖ¸µÄÊÇ·¢ËÍÕßµÄêÇ³Æ(Êµ¼ÊÉÏÊÇ¼ÆËã»úµÇÂ¼Ãû)
- * ·¢ËÍÖ÷»ú£¬Ö¸µÄÊÇ·¢ËÍÖ÷»úµÄÖ÷»úÃû£»£¨Ö÷»úÃû£©
- * ÃüÁî£¬Ö¸µÄÊÇĞ­ÒéÖĞ¶¨ÒåµÄÒ»ÏµÁĞÃüÁî£¬¾ßÌå¼ûÏÂÎÄ£»
- * ¸½¼ÓÊı¾İ£¬Ö¸µÄÊÇ¶ÔÓ¦²»Í¬µÄ¾ßÌåÃüÁî£¬ĞèÒªÌá¹©µÄÊı¾İ¡£µ±ÎªÉÏÏß±¨ÎÄÊ±£¬¸½¼ÓĞÅÏ¢ÄÚÈİÊÇÓÃ»§ÃûºÍ·Ö×éÃû£¬ÖĞ¼äÓÃ"\0"·Ö¸ô
- * 
- * ÀıÈç£º
- * 1:100:shirouzu:jupiter:32:Hello 
- * ±íÊ¾ shirouzuÓÃ»§·¢ËÍÁË Hello ÕâÌõÏûÏ¢£¨32¶ÔÓ¦ÎªIPMSG_SEND_MSGÕâ¸öÃüÁî£¬¾ßÌåĞèÒª¿´Ô´ÂëÖĞµÄºê¶¨Òå£©¡£
- * 
- * @author wangqi
- * 
+ * æ¯éƒ¨åˆ†åˆ†åˆ«å¯¹åº”ä¸ºï¼šç‰ˆæœ¬å·ï¼ˆç°åœ¨æ˜¯1ï¼‰:æ•°æ®åŒ…ç¼–å·:å‘é€ä¸»æœº:å‘½ä»¤:é™„åŠ æ•°æ®
+ * å…¶ä¸­ï¼š
+ * æ•°æ®åŒ…ç¼–å·ï¼Œä¸€èˆ¬æ˜¯å–æ¯«ç§’æ•°ã€‚åˆ©ç”¨è¿™ä¸ªæ•°æ®ï¼Œå¯ä»¥å”¯ä¸€çš„åŒºåˆ«æ¯ä¸ªæ•°æ®åŒ…ï¼›
+ * SenderNameæŒ‡çš„æ˜¯å‘é€è€…çš„æ˜µç§°(å®é™…ä¸Šæ˜¯è®¡ç®—æœºç™»å½•å)
+ * å‘é€ä¸»æœºï¼ŒæŒ‡çš„æ˜¯å‘é€ä¸»æœºçš„ä¸»æœºåï¼›ï¼ˆä¸»æœºåï¼‰
+ * å‘½ä»¤ï¼ŒæŒ‡çš„æ˜¯åè®®ä¸­å®šä¹‰çš„ä¸€ç³»åˆ—å‘½ä»¤ï¼Œå…·ä½“è§ä¸‹æ–‡ï¼›
+ * é™„åŠ æ•°æ®ï¼ŒæŒ‡çš„æ˜¯å¯¹åº”ä¸åŒçš„å…·ä½“å‘½ä»¤ï¼Œéœ€è¦æä¾›çš„æ•°æ®ã€‚å½“ä¸ºä¸Šçº¿æŠ¥æ–‡æ—¶ï¼Œé™„åŠ ä¿¡æ¯å†…å®¹æ˜¯ç”¨æˆ·åå’Œåˆ†ç»„åï¼Œä¸­é—´ç”¨"\0"åˆ†éš”
  * 2014/10/21
  */
 public class IpMessageProtocol {
-	private String version;	//°æ±¾ºÅ Ä¿Ç°¶¼Îª1
-	private String packetNo;//Êı¾İ°ü±àºÅ
-	private String senderName;	//·¢ËÍÕßêÇ³Æ£¨ÈôÊÇPC£¬ÔòÎªµÇÂ¼Ãû£©
-	private String senderHost;	//·¢ËÍÖ÷»úÃû
-	private int commandNo;	//ÃüÁî
-	private String additionalSection;	//¸½¼ÓÊı¾İ
+	private String version;	//ç‰ˆæœ¬å· ç›®å‰éƒ½ä¸º1
+	private String packetNo;//æ•°æ®åŒ…ç¼–å·
+	private String senderName;	//å‘é€è€…æ˜µç§°ï¼ˆè‹¥æ˜¯PCï¼Œåˆ™ä¸ºç™»å½•åï¼‰
+	private String senderHost;	//å‘é€ä¸»æœºå
+	private int commandNo;	//å‘½ä»¤
+	private String additionalSection;	//é™„åŠ æ•°æ®
 	
 	public IpMessageProtocol(){
 		this.packetNo = getSeconds();
 	}
 	
-	// ¸ù¾İĞ­Òé×Ö·û´®³õÊ¼»¯
+	// æ ¹æ®åè®®å­—ç¬¦ä¸²åˆå§‹åŒ–
 	public IpMessageProtocol(String protocolString){
-		String[] args = protocolString.split(":");	// ÒÔ:·Ö¸îĞ­Òé´®
+		String[] args = protocolString.split(":");	// ä»¥:åˆ†å‰²åè®®ä¸²
 		version = args[0];
 		packetNo = args[1];
 		senderName = args[2];
 		senderHost = args[3];
 		commandNo = Integer.parseInt(args[4]);
-		if(args.length >= 6){	//ÊÇ·ñÓĞ¸½¼ÓÊı¾İ
+		if(args.length >= 6){	//æ˜¯å¦æœ‰é™„åŠ æ•°æ®
 			additionalSection = args[5];
 		}else{
 			additionalSection = "";
 		}
-		for(int i = 6; i < args.length; i++){	//´¦Àí¸½¼ÓÊı¾İÖĞÓĞ:µÄÇé¿ö
+		for(int i = 6; i < args.length; i++){	//å¤„ç†é™„åŠ æ•°æ®ä¸­æœ‰:çš„æƒ…å†µ
 			additionalSection += (":" + args[i]);
 		}
 		
@@ -104,7 +97,7 @@ public class IpMessageProtocol {
 		this.additionalSection = additionalSection;
 	}
 	
-	//µÃµ½Ğ­Òé´®
+	//å¾—åˆ°åè®®ä¸²
 	public String getProtocolString(){
 		StringBuffer sb = new StringBuffer();
 		sb.append(version);
@@ -122,7 +115,7 @@ public class IpMessageProtocol {
 		return sb.toString();
 	}
 	
-	//µÃµ½Êı¾İ°ü±àºÅ£¬ºÁÃëÊı
+	//å¾—åˆ°æ•°æ®åŒ…ç¼–å·ï¼Œæ¯«ç§’æ•°
 	private String getSeconds(){
 		Date nowDate = new Date();
 		return Long.toString(nowDate.getTime());

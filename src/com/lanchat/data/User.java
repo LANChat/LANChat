@@ -1,23 +1,17 @@
 package com.lanchat.data;
 
-/**
- * ÓÃ»§Àà£¬¶ÔÓ¦¾ÖÓòÍøÖĞÃ¿¸öÔÚÏßÓÃ»§µÄĞÅÏ¢
- * @author ccf
- * V1.0 2012/2/8 ĞÂ½¨
- *
- */
 public class User {
-	private String userName;	// ÓÃ»§Ãû
-	private String alias;		//±ğÃû£¨ÈôÎªpc£¬ÔòÊÇµÇÂ¼Ãû£©
-	private String groupName;	//×éÃû
-	private String ip;			//ipµØÖ·
-	private String hostName;	//Ö÷»úÃû
-	private String mac;			//MACµØÖ·
-	private int msgCount;		//Î´½ÓÊÕÏûÏ¢Êı
+	private String userName;	// ç”¨æˆ·å
+	private String alias;		//åˆ«åï¼ˆè‹¥ä¸ºpcï¼Œåˆ™æ˜¯ç™»å½•åï¼‰
+	private String groupName;	//ç»„å
+	private String ip;			//ipåœ°å€
+	private String hostName;	//ä¸»æœºå
+	private String mac;			//MACåœ°å€
+	private int msgCount;		//æœªæ¥æ”¶æ¶ˆæ¯æ•°
 	
 	
 	public User(){
-		msgCount = 0;	//³õÊ¼»¯ÎªÁã
+		msgCount = 0;	//åˆå§‹åŒ–ä¸ºé›¶
 	}
 	
 	public User(String userName, String alias, String groupName, String ip,
@@ -29,7 +23,7 @@ public class User {
 		this.ip = ip;
 		this.hostName = hostName;
 		this.mac = mac;
-		msgCount = 0;	//³õÊ¼»¯ÎªÁã
+		msgCount = 0;	//åˆå§‹åŒ–ä¸ºé›¶
 	}
 
 
